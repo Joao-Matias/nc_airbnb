@@ -1,0 +1,30 @@
+{
+  "name": "nc_airbnb",
+  "version": "1.0.0",
+  "description": "This project will aim to replicate a properties booking website where you can add houses to rent. You will be able to view several houses within the the search page. Selecting one will bring you to the dedicated page and allow you to see more information related to that house. You will be able to rent a house for X amount of day, blocking the house (since its been booked). You will be able to add reviews to houses and users.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "seed": "node ./db/data/test/seed-run",
+    "create-db": "psql -f ./db/data/test/util-functions/create-database.sql"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Joao-Matias/nc_airbnb.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Joao-Matias/nc_airbnb/issues"
+  },
+  "homepage": "https://github.com/Joao-Matias/nc_airbnb#readme",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "pg": "^8.15.6",
+    "pg-format": "^1.0.4",
+    "y": "^0.3.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
