@@ -1,10 +1,11 @@
 const db = require('./connection');
+const format = require('pg-format');
 
-async function seed() {
-  await db.query(`DROP TABLE IF EXISTS property_types;`);
+async function seed(usersData) {
   await db.query(`DROP TABLE IF EXISTS properties;`);
   await db.query(`DROP TABLE IF EXISTS reviews;`);
   await db.query(`DROP TABLE IF EXISTS users;`);
+  await db.query(`DROP TABLE IF EXISTS property_types;`);
 
   await db.query(`CREATE TABLE users(
                   user_id SERIAL PRIMARY KEY,
@@ -40,6 +41,25 @@ async function seed() {
                   price_per_night DECIMAL NOT NULL,
                   description TEXT
           );`);
+
+  await db.query(
+    format(
+      `INSERT INTO users(
+          first_name,surname,email,phone_number,is_host,avatar,created_at
+          ) VALUES %L`,
+      usersData.map(({ first_name, surname, email, phone_number, role, avatar }) => [
+        first_name,
+        surname,
+        email,
+        phone_number,
+        role === 'host' ? true : false,
+        avatar,
+        (created_at = new Date()),
+      ])
+    )
+  );
+
+  await db.query('SELECT * FROM users;');
 }
 
 module.exports = seed;
