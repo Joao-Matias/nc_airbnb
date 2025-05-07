@@ -1,9 +1,9 @@
 const db = require('./connection');
 const format = require('pg-format');
 
-async function seed(usersData) {
-  await db.query(`DROP TABLE IF EXISTS properties;`);
+async function seed(usersData, propertyTypesData) {
   await db.query(`DROP TABLE IF EXISTS reviews;`);
+  await db.query(`DROP TABLE IF EXISTS properties;`);
   await db.query(`DROP TABLE IF EXISTS users;`);
   await db.query(`DROP TABLE IF EXISTS property_types;`);
 
@@ -15,15 +15,6 @@ async function seed(usersData) {
                   phone_number VARCHAR,
                   is_host BOOLEAN NOT NULL,
                   avatar VARCHAR,
-                  created_at TIMESTAMP
-                );`);
-
-  await db.query(`CREATE TABLE reviews(
-                  review_id SERIAL PRIMARY KEY,
-                  property_id INTEGER NOT NULL,
-                  guest_id INTEGER REFERENCES users(user_id) NOT NULL,
-                  rating INTEGER NOT NULL,
-                  comment TEXT,
                   created_at TIMESTAMP
                 );`);
 
@@ -40,6 +31,15 @@ async function seed(usersData) {
                   property_type VARCHAR REFERENCES property_types(property_type) NOT NULL,
                   price_per_night DECIMAL NOT NULL,
                   description TEXT
+          );`);
+
+  await db.query(`CREATE TABLE reviews(
+            review_id SERIAL PRIMARY KEY,
+            property_id INTEGER REFERENCES properties(property_id) NOT NULL,
+            guest_id INTEGER REFERENCES users(user_id) NOT NULL,
+            rating INTEGER NOT NULL,
+            comment TEXT,
+            created_at TIMESTAMP
           );`);
 
   await db.query(
@@ -59,7 +59,14 @@ async function seed(usersData) {
     )
   );
 
-  await db.query('SELECT * FROM users;');
+  await db.query(
+    format(
+      `INSERT INTO property_types(
+          property_type,description
+          ) VALUES %L`,
+      propertyTypesData.map(({ property_type, description }) => [property_type, description])
+    )
+  );
 }
 
 module.exports = seed;
