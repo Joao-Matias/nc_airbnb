@@ -1,4 +1,4 @@
-const { insertProperties, insertReviews, insertImages } = require('../util-functions/manage-table');
+const { insertProperties, insertReviews, insertImages, insertFavourites } = require('../util-functions/insertData');
 
 describe('insertProperties', () => {
   test('should always return an array', () => {
@@ -402,6 +402,144 @@ describe('insertImages', () => {
       [10, 'https://example.com/images/quaint_cottage_1.jpg', 'Alt tag for Quaint Cottage in the Hills'],
       [1, 'https://example.com/images/modern_apartment_1.jpg', 'Alt tag for Modern Apartment in City Center'],
       [1, 'https://example.com/images/modern_apartment_3.jpg', 'Alt tag for Modern Apartment in City Center 2'],
+    ]);
+  });
+});
+
+describe('insertFavourites', () => {
+  test('should return an array', () => {
+    expect(insertFavourites([])).toEqual([]);
+  });
+
+  test('should iterate the first arg replacing guest name with the second arg id', () => {
+    const favouries = [
+      {
+        guest_name: 'Bob Smith',
+        property_name: 'Modern Apartment in City Center',
+      },
+      {
+        guest_name: 'Rachel Cummings',
+        property_name: 'Cosy Family House',
+      },
+      {
+        guest_name: 'Frank White',
+        property_name: 'Chic Studio Near the Beach',
+      },
+    ];
+
+    const users = [
+      {
+        user_id: 2,
+        first_name: 'Bob',
+        surname: 'Smith',
+        email: 'bob@example.com',
+        phone_number: '+44 7000 222222',
+        is_host: false,
+        avatar: 'https://example.com/images/bob.jpg',
+      },
+      {
+        user_id: 4,
+        first_name: 'Frank',
+        surname: 'White',
+        email: 'frank@example.com',
+        phone_number: '+44 7000 444444',
+        is_host: false,
+        avatar: 'https://example.com/images/frank.jpg',
+      },
+      {
+        user_id: 6,
+        first_name: 'Rachel',
+        surname: 'Cummings',
+        email: 'rachel@example.com',
+        phone_number: '+44 7000 666666',
+        is_host: false,
+        avatar: 'https://example.com/images/rachel.jpg',
+      },
+    ];
+
+    expect(insertFavourites(favouries, users)).toEqual([[2], [6], [4]]);
+  });
+
+  test('should iterate the first arg replacing property name with the third arg id', () => {
+    const favouries = [
+      {
+        guest_name: 'Bob Smith',
+        property_name: 'Modern Apartment in City Center',
+      },
+      {
+        guest_name: 'Frank White',
+        property_name: 'Chic Studio Near the Beach',
+      },
+      {
+        guest_name: 'Rachel Cummings',
+        property_name: 'Cosy Family House',
+      },
+    ];
+
+    const users = [
+      {
+        user_id: 2,
+        first_name: 'Bob',
+        surname: 'Smith',
+        email: 'bob@example.com',
+        phone_number: '+44 7000 222222',
+        is_host: false,
+        avatar: 'https://example.com/images/bob.jpg',
+      },
+      {
+        user_id: 4,
+        first_name: 'Frank',
+        surname: 'White',
+        email: 'frank@example.com',
+        phone_number: '+44 7000 444444',
+        is_host: false,
+        avatar: 'https://example.com/images/frank.jpg',
+      },
+      {
+        user_id: 6,
+        first_name: 'Rachel',
+        surname: 'Cummings',
+        email: 'rachel@example.com',
+        phone_number: '+44 7000 666666',
+        is_host: false,
+        avatar: 'https://example.com/images/rachel.jpg',
+      },
+    ];
+
+    const properties = [
+      {
+        property_id: 1,
+        host_id: 1,
+        name: 'Modern Apartment in City Center',
+        location: 'London, UK',
+        property_type: 'Apartment',
+        price_per_night: '120',
+        description: 'Description of Modern Apartment in City Center.',
+      },
+      {
+        property_id: 2,
+        host_id: 1,
+        name: 'Cosy Family House',
+        location: 'Manchester, UK',
+        property_type: 'House',
+        price_per_night: '150',
+        description: 'Description of Cosy Family House.',
+      },
+      {
+        property_id: 3,
+        host_id: 1,
+        name: 'Chic Studio Near the Beach',
+        location: 'Brighton, UK',
+        property_type: 'Studio',
+        price_per_night: '90',
+        description: 'Description of Chic Studio Near the Beach.',
+      },
+    ];
+
+    expect(insertFavourites(favouries, users, properties)).toEqual([
+      [2, 1],
+      [4, 3],
+      [6, 2],
     ]);
   });
 });

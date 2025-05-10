@@ -76,4 +76,31 @@ const insertImages = (images, properties = []) => {
   return changedImages;
 };
 
-module.exports = { insertProperties, insertReviews, insertImages };
+const insertFavourites = (favourites, users = [], properties = []) => {
+  const changedFavourites = favourites.map((favouriteObj) => {
+    const { guest_name: guestName, property_name: propertyName } = favouriteObj;
+
+    const newFavouriteData = [];
+
+    for (let i = 0; i < users.length; i++) {
+      const { first_name: firstName, surname, user_id: userId } = users[i];
+      if (firstName + ' ' + surname === guestName) {
+        const guestId = userId;
+        newFavouriteData.push(guestId);
+      }
+    }
+
+    for (let i = 0; i < properties.length; i++) {
+      if (properties[i].name === propertyName) {
+        const propertyId = properties[i].property_id;
+        newFavouriteData.push(propertyId);
+      }
+    }
+
+    return newFavouriteData;
+  });
+
+  return changedFavourites;
+};
+
+module.exports = { insertProperties, insertReviews, insertImages, insertFavourites };
