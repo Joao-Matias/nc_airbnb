@@ -1,4 +1,10 @@
-const { insertProperties, insertReviews, insertImages, insertFavourites } = require('../util-functions/insertData');
+const {
+  insertProperties,
+  insertReviews,
+  insertImages,
+  insertFavourites,
+  insertPropertiesAmenities,
+} = require('../util-functions/insertData');
 
 describe('insertProperties', () => {
   test('should always return an array', () => {
@@ -540,6 +546,111 @@ describe('insertFavourites', () => {
       [2, 1],
       [4, 3],
       [6, 2],
+    ]);
+  });
+});
+
+describe('insertPropertiesAmenities', () => {
+  test('should always return an array', () => {
+    const arr = [];
+
+    expect(insertPropertiesAmenities(arr)).toEqual([]);
+  });
+
+  test('should iterate through the first arg replacing the property name with the respective ID of the second arg', () => {
+    const amenities = [
+      {
+        property_name: 'Modern Apartment in City Center',
+      },
+      {
+        property_name: 'Cosy Family House',
+      },
+      {
+        property_name: 'Cosy Family House',
+      },
+    ];
+    const properties = [
+      {
+        property_id: 1,
+        host_id: 1,
+        name: 'Modern Apartment in City Center',
+        location: 'London, UK',
+        property_type: 'Apartment',
+        price_per_night: '120',
+        description: 'Description of Modern Apartment in City Center.',
+      },
+      {
+        property_id: 2,
+        host_id: 1,
+        name: 'Cosy Family House',
+        location: 'Manchester, UK',
+        property_type: 'House',
+        price_per_night: '150',
+        description: 'Description of Cosy Family House.',
+      },
+    ];
+
+    expect(insertPropertiesAmenities(amenities, properties)).toEqual([[1], [2], [2]]);
+  });
+  test('should iterate through the first arg assigning the aminity corresponding on the third arg', () => {
+    const propertiesAmenities = [
+      {
+        property_name: 'Modern Apartment in City Center',
+        aminity_name: 'Tv',
+      },
+      {
+        property_name: 'Cosy Family House',
+        aminity_name: 'Kitchen',
+      },
+      {
+        property_name: 'Cosy Family House',
+        aminity_name: 'Pets allowed',
+      },
+    ];
+
+    const properties = [
+      {
+        property_id: 1,
+        host_id: 1,
+        name: 'Modern Apartment in City Center',
+        location: 'London, UK',
+        property_type: 'Apartment',
+        price_per_night: '120',
+        description: 'Description of Modern Apartment in City Center.',
+      },
+      {
+        property_id: 2,
+        host_id: 1,
+        name: 'Cosy Family House',
+        location: 'Manchester, UK',
+        property_type: 'House',
+        price_per_night: '150',
+        description: 'Description of Cosy Family House.',
+      },
+    ];
+
+    const amenities = [
+      {
+        amenity: 'Kitchen',
+      },
+      {
+        amenity: 'Wifi',
+      },
+      {
+        amenity: 'Parking',
+      },
+      {
+        amenity: 'Tv',
+      },
+      {
+        amenity: 'Pets allowed',
+      },
+    ];
+
+    expect(insertPropertiesAmenities(propertiesAmenities, properties, amenities)).toEqual([
+      [1, 'Tv'],
+      [2, 'Kitchen'],
+      [2, 'Pets allowed'],
     ]);
   });
 });

@@ -103,4 +103,29 @@ const insertFavourites = (favourites, users = [], properties = []) => {
   return changedFavourites;
 };
 
-module.exports = { insertProperties, insertReviews, insertImages, insertFavourites };
+const insertPropertiesAmenities = (propertiesAmenities, properties, aminities) => {
+  const changedAmenitiesPerProperty = propertiesAmenities.map((propertyAmenity) => {
+    const { property_name: propertyName, aminity_name: aminityName } = propertyAmenity;
+
+    const updatedAmenityPerProperty = [];
+    for (let i = 0; i < properties.length; i++) {
+      if (properties[i].name === propertyName) {
+        const propertyId = properties[i].property_id;
+        updatedAmenityPerProperty.push(propertyId);
+      }
+    }
+
+    if (aminities) {
+      for (let i = 0; i < aminities.length; i++) {
+        if (aminities[i].amenity === aminityName) {
+          const aminitySlug = aminities[i].amenity;
+          updatedAmenityPerProperty.push(aminitySlug);
+        }
+      }
+    }
+
+    return updatedAmenityPerProperty;
+  });
+  return changedAmenitiesPerProperty;
+};
+module.exports = { insertProperties, insertReviews, insertImages, insertFavourites, insertPropertiesAmenities };

@@ -1,0 +1,17 @@
+[
+  {
+    "amenity": "Kitchen"
+  },
+  {
+    "amenity": "Wifi"
+  },
+  {
+    "amenity": "Parking"
+  },
+  {
+    "amenity": "Tv"
+  },
+  {
+    "amenity": "Pets allowed"
+  }
+]

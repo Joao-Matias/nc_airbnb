@@ -1,9 +1,24 @@
 const db = require('./connection');
 const format = require('pg-format');
-const { insertProperties, insertReviews, insertImages, insertFavourites } = require('./util-functions/insertData');
+const {
+  insertProperties,
+  insertReviews,
+  insertImages,
+  insertFavourites,
+  insertPropertiesAmenities,
+} = require('./util-functions/insertData');
 const dropAllTables = require('./util-functions/drop-tables');
 const createAllTables = require('./util-functions/create-tables');
-async function seed(usersData, propertyTypesData, propertiesData, reviewsData, imagesData, favouritesData) {
+async function seed(
+  usersData,
+  propertyTypesData,
+  propertiesData,
+  reviewsData,
+  imagesData,
+  favouritesData,
+  amenititesData,
+  propertiesAmenitiesData
+) {
   await dropAllTables();
 
   await createAllTables();
@@ -66,6 +81,24 @@ async function seed(usersData, propertyTypesData, propertiesData, reviewsData, i
       guest_id,property_id
       ) VALUES %L;`,
       insertFavourites(favouritesData, insertedUsers, insertedProperties)
+    )
+  );
+
+  const { rows: insertedAmenities } = await db.query(
+    format(
+      `INSERT INTO amenities(
+      amenity
+      ) VALUES %L RETURNING *;`,
+      amenititesData.map(({ amenity }) => [amenity])
+    )
+  );
+
+  await db.query(
+    format(
+      `INSERT INTO properties_amenities(
+      property_id,amenity_slug
+      ) VALUES %L;`,
+      insertPropertiesAmenities(propertiesAmenitiesData, insertedProperties, insertedAmenities)
     )
   );
 }
