@@ -1,7 +1,8 @@
 const db = require('./connection');
 const format = require('pg-format');
+const { insertProperties } = require('./util-functions/manage-table');
 
-async function seed(usersData, propertyTypesData) {
+async function seed(usersData, propertyTypesData, propertiesData) {
   await db.query(`DROP TABLE IF EXISTS reviews;`);
   await db.query(`DROP TABLE IF EXISTS properties;`);
   await db.query(`DROP TABLE IF EXISTS users;`);
@@ -15,7 +16,7 @@ async function seed(usersData, propertyTypesData) {
                   phone_number VARCHAR,
                   is_host BOOLEAN NOT NULL,
                   avatar VARCHAR,
-                  created_at TIMESTAMP
+                  created_at TIMESTAMP DEFAULT Now()
                 );`);
 
   await db.query(`CREATE TABLE property_types(
@@ -39,14 +40,14 @@ async function seed(usersData, propertyTypesData) {
             guest_id INTEGER REFERENCES users(user_id) NOT NULL,
             rating INTEGER NOT NULL,
             comment TEXT,
-            created_at TIMESTAMP
+            created_at TIMESTAMP DEFAULT Now()
           );`);
 
-  await db.query(
+  const { rows: insertedUSers } = await db.query(
     format(
       `INSERT INTO users(
-          first_name,surname,email,phone_number,is_host,avatar,created_at
-          ) VALUES %L`,
+          first_name,surname,email,phone_number,is_host,avatar
+          ) VALUES %L RETURNING *;`,
       usersData.map(({ first_name, surname, email, phone_number, role, avatar }) => [
         first_name,
         surname,
@@ -54,7 +55,6 @@ async function seed(usersData, propertyTypesData) {
         phone_number,
         role === 'host' ? true : false,
         avatar,
-        (created_at = new Date()),
       ])
     )
   );
@@ -63,8 +63,17 @@ async function seed(usersData, propertyTypesData) {
     format(
       `INSERT INTO property_types(
           property_type,description
-          ) VALUES %L`,
+          ) VALUES %L RETURNING *;`,
       propertyTypesData.map(({ property_type, description }) => [property_type, description])
+    )
+  );
+
+  const { rows: insertedProperties } = await db.query(
+    format(
+      `INSERT INTO properties(
+        name,location,price_per_night,description,property_type,host_id
+          ) VALUES %L RETURNING *;`,
+      insertProperties(propertiesData, insertedUSers)
     )
   );
 }
