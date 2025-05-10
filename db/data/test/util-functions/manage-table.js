@@ -54,4 +54,26 @@ const insertReviews = (reviews, users = [], properties = []) => {
   return changedReviews;
 };
 
-module.exports = { insertProperties, insertReviews };
+const insertImages = (images, properties = []) => {
+  const changedImages = images.map((image) => {
+    const newImage = [];
+
+    const { property_name: propertyName, image_url: imageUrl, alt_tag: altTag } = image;
+
+    for (let i = 0; i < properties.length; i++) {
+      if (properties[i].name === propertyName) {
+        const propertyId = properties[i].property_id;
+        newImage.push(propertyId);
+      }
+    }
+
+    newImage.push(imageUrl);
+    newImage.push(altTag);
+
+    return newImage;
+  });
+
+  return changedImages;
+};
+
+module.exports = { insertProperties, insertReviews, insertImages };

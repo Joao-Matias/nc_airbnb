@@ -1,8 +1,9 @@
 const db = require('./connection');
 const format = require('pg-format');
-const { insertProperties, insertReviews } = require('./util-functions/manage-table');
+const { insertProperties, insertReviews, insertImages } = require('./util-functions/manage-table');
 
-async function seed(usersData, propertyTypesData, propertiesData, reviewsData) {
+async function seed(usersData, propertyTypesData, propertiesData, reviewsData, imagesData) {
+  await db.query(`DROP TABLE IF EXISTS images;`);
   await db.query(`DROP TABLE IF EXISTS reviews;`);
   await db.query(`DROP TABLE IF EXISTS properties;`);
   await db.query(`DROP TABLE IF EXISTS users;`);
@@ -43,6 +44,13 @@ async function seed(usersData, propertyTypesData, propertiesData, reviewsData) {
             created_at TIMESTAMP DEFAULT Now()
           );`);
 
+  await db.query(`CREATE TABLE images(
+            image_id SERIAL PRIMARY KEY,
+            property_id INTEGER REFERENCES properties(property_id) NOT NULL,
+            image_url VARCHAR NOT NULL,
+            alt_text VARCHAR NOT NULL
+            )`);
+
   const { rows: insertedUsers } = await db.query(
     format(
       `INSERT INTO users(
@@ -77,15 +85,23 @@ async function seed(usersData, propertyTypesData, propertiesData, reviewsData) {
     )
   );
 
-  const { rows: insertedReviews } = await db.query(
+  await db.query(
     format(
       `INSERT INTO reviews(
       property_id,guest_id,rating,comment
-      ) VALUES %L RETURNING *;`,
+      ) VALUES %L;`,
       insertReviews(reviewsData, insertedUsers, insertedProperties)
     )
   );
-  console.log(insertedReviews);
+
+  await db.query(
+    format(
+      `INSERT INTO images(
+      property_id,image_url,alt_text
+      ) VALUES %L;`,
+      insertImages(imagesData, insertedProperties)
+    )
+  );
 }
 
 module.exports = seed;

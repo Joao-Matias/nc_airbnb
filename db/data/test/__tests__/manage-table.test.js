@@ -1,4 +1,4 @@
-const { insertProperties, insertReviews } = require('../util-functions/manage-table');
+const { insertProperties, insertReviews, insertImages } = require('../util-functions/manage-table');
 
 describe('insertProperties', () => {
   test('should always return an array', () => {
@@ -306,6 +306,102 @@ describe('insertReviews', () => {
         3,
         'Comment about Cosy Loft in the Heart of the City: Great location but the loft was a bit smaller than expected.',
       ],
+    ]);
+  });
+});
+
+describe('insertImages', () => {
+  test('should return an array', () => {
+    expect(insertImages([])).toEqual([]);
+  });
+
+  test('should iterate the first arg returning an img url', () => {
+    const images = [
+      {
+        image_url: 'https://example.com/images/quaint_cottage_1.jpg',
+      },
+      {
+        image_url: 'https://example.com/images/modern_apartment_1.jpg',
+      },
+      {
+        image_url: 'https://example.com/images/modern_apartment_3.jpg',
+      },
+    ];
+
+    expect(insertImages(images)).toEqual([
+      ['https://example.com/images/quaint_cottage_1.jpg'],
+      ['https://example.com/images/modern_apartment_1.jpg'],
+      ['https://example.com/images/modern_apartment_3.jpg'],
+    ]);
+  });
+
+  test('should iterate the first arg returning an alt tag of the image', () => {
+    const images = [
+      {
+        image_url: 'https://example.com/images/quaint_cottage_1.jpg',
+        alt_tag: 'Alt tag for Quaint Cottage in the Hills',
+      },
+      {
+        image_url: 'https://example.com/images/modern_apartment_1.jpg',
+        alt_tag: 'Alt tag for Modern Apartment in City Center',
+      },
+      {
+        image_url: 'https://example.com/images/modern_apartment_3.jpg',
+        alt_tag: 'Alt tag for Modern Apartment in City Center 2',
+      },
+    ];
+
+    expect(insertImages(images)).toEqual([
+      ['https://example.com/images/quaint_cottage_1.jpg', 'Alt tag for Quaint Cottage in the Hills'],
+      ['https://example.com/images/modern_apartment_1.jpg', 'Alt tag for Modern Apartment in City Center'],
+      ['https://example.com/images/modern_apartment_3.jpg', 'Alt tag for Modern Apartment in City Center 2'],
+    ]);
+  });
+
+  test('should iterate the first arg replacing the property name by the second arg property id', () => {
+    const properties = [
+      {
+        property_id: 10,
+        host_id: 5,
+        name: 'Quaint Cottage in the Hills',
+        location: 'Lake District, UK',
+        property_type: 'House',
+        price_per_night: '180',
+        description: 'Description of Quaint Cottage in the Hills.',
+      },
+      {
+        property_id: 1,
+        host_id: 1,
+        name: 'Modern Apartment in City Center',
+        location: 'London, UK',
+        property_type: 'Apartment',
+        price_per_night: '120',
+        description: 'Description of Modern Apartment in City Center.',
+      },
+    ];
+
+    const images = [
+      {
+        property_name: 'Quaint Cottage in the Hills',
+        image_url: 'https://example.com/images/quaint_cottage_1.jpg',
+        alt_tag: 'Alt tag for Quaint Cottage in the Hills',
+      },
+      {
+        property_name: 'Modern Apartment in City Center',
+        image_url: 'https://example.com/images/modern_apartment_1.jpg',
+        alt_tag: 'Alt tag for Modern Apartment in City Center',
+      },
+      {
+        property_name: 'Modern Apartment in City Center',
+        image_url: 'https://example.com/images/modern_apartment_3.jpg',
+        alt_tag: 'Alt tag for Modern Apartment in City Center 2',
+      },
+    ];
+
+    expect(insertImages(images, properties)).toEqual([
+      [10, 'https://example.com/images/quaint_cottage_1.jpg', 'Alt tag for Quaint Cottage in the Hills'],
+      [1, 'https://example.com/images/modern_apartment_1.jpg', 'Alt tag for Modern Apartment in City Center'],
+      [1, 'https://example.com/images/modern_apartment_3.jpg', 'Alt tag for Modern Apartment in City Center 2'],
     ]);
   });
 });
