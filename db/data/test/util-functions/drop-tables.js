@@ -1,6 +1,7 @@
 const db = require('../connection');
 
 const dropAllTables = async () => {
+  await db.query(`DROP TABLE IF EXISTS bookings;`);
   await db.query(`DROP TABLE IF EXISTS properties_amenities;`);
   await db.query(`DROP TABLE IF EXISTS amenities;`);
   await db.query(`DROP TABLE IF EXISTS images;`);

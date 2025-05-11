@@ -58,6 +58,15 @@ const createAllTables = async () => {
       property_id INTEGER REFERENCES properties(property_id) NOT NULL,
       amenity_slug VARCHAR REFERENCES amenities(amenity) NOT NULL
       );`);
+
+  await db.query(`CREATE TABLE bookings(
+      booking_id SERIAL PRIMARY KEY,
+      property_id INTEGER REFERENCES properties(property_id) NOT NULL,
+      guest_id INTEGER REFERENCES users(user_id) NOT NULL,
+      check_in_date DATE NOT NULL,
+      check_out_date DATE NOT NULL,
+      created_at TIMESTAMP DEFAULT Now()
+      );`);
 };
 
 module.exports = createAllTables;

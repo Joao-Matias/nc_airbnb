@@ -7,10 +7,20 @@ const {
   insertFavourites,
   insertAmenities,
   insertPropertiesAmenities,
+  insertBookings,
 } = require('./util-functions/insertData');
 const dropAllTables = require('./util-functions/drop-tables');
 const createAllTables = require('./util-functions/create-tables');
-async function seed(usersData, propertyTypesData, propertiesData, reviewsData, imagesData, favouritesData) {
+
+async function seed(
+  usersData,
+  propertyTypesData,
+  propertiesData,
+  reviewsData,
+  imagesData,
+  favouritesData,
+  bookingsData
+) {
   await dropAllTables();
 
   await createAllTables();
@@ -91,6 +101,18 @@ async function seed(usersData, propertyTypesData, propertiesData, reviewsData, i
       property_id,amenity_slug
       ) VALUES %L RETURNING *;`,
       insertPropertiesAmenities(propertiesData, insertedProperties, insertedAmenities)
+    )
+  );
+
+  console.log(insertedProperties);
+  console.log(insertedUsers);
+
+  const { rows: insertedBookings } = await db.query(
+    format(
+      `INSERT INTO bookings(
+      property_id,guest_id,check_in_date,check_out_date
+      ) VALUES %L RETURNING *;`,
+      insertBookings(bookingsData, insertedProperties, insertedUsers)
     )
   );
 }

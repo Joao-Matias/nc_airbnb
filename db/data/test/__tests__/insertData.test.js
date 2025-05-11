@@ -1,4 +1,3 @@
-const { propertiesData } = require('..');
 const {
   insertProperties,
   insertReviews,
@@ -6,6 +5,7 @@ const {
   insertFavourites,
   insertPropertiesAmenities,
   insertAmenities,
+  insertBookings,
 } = require('../util-functions/insertData');
 
 describe('insertProperties', () => {
@@ -738,3 +738,192 @@ describe('insertPropertiesAmenities', () => {
 //     ]);
 //   });
 // });
+describe('insertBookings', () => {
+  test('should return an array', () => {
+    expect(insertBookings([])).toEqual([]);
+  });
+
+  test('should iterate through the first arg replacing the property name with the corresponding id from the second arg', () => {
+    const bookings = [
+      {
+        property_name: 'Luxury Penthouse with View',
+        guest_name: 'Bob Smith',
+      },
+      {
+        property_name: 'Cosy Family House',
+        guest_name: 'Rachel Cummings',
+      },
+    ];
+
+    const properties = [
+      {
+        property_id: 6,
+        host_id: 1,
+        name: 'Luxury Penthouse with View',
+        location: 'London, UK',
+        property_type: 'Apartment',
+        price_per_night: '250',
+        description: 'Description of Luxury Penthouse with View.',
+      },
+      {
+        property_id: 2,
+        host_id: 1,
+        name: 'Cosy Family House',
+        location: 'Manchester, UK',
+        property_type: 'House',
+        price_per_night: '150',
+        description: 'Description of Cosy Family House.',
+      },
+    ];
+
+    expect(insertBookings(bookings, properties)).toEqual([[6], [2]]);
+  });
+
+  test('should iterate through the first arg returning the check in date', () => {
+    const bookings = [
+      {
+        property_name: 'Luxury Penthouse with View',
+        guest_name: 'Bob Smith',
+        check_in_date: '2025-12-08',
+      },
+      {
+        property_name: 'Cosy Family House',
+        guest_name: 'Rachel Cummings',
+        check_in_date: '2025-12-10',
+      },
+    ];
+
+    const properties = [
+      {
+        property_id: 6,
+        host_id: 1,
+        name: 'Luxury Penthouse with View',
+        location: 'London, UK',
+        property_type: 'Apartment',
+        price_per_night: '250',
+        description: 'Description of Luxury Penthouse with View.',
+      },
+      {
+        property_id: 2,
+        host_id: 1,
+        name: 'Cosy Family House',
+        location: 'Manchester, UK',
+        property_type: 'House',
+        price_per_night: '150',
+        description: 'Description of Cosy Family House.',
+      },
+    ];
+
+    expect(insertBookings(bookings, properties)).toEqual([
+      [6, '2025-12-08'],
+      [2, '2025-12-10'],
+    ]);
+  });
+
+  test('should iterate through the first arg returning the check out date', () => {
+    const bookings = [
+      {
+        property_name: 'Luxury Penthouse with View',
+        guest_name: 'Bob Smith',
+        check_in_date: '2025-12-08',
+        check_out_date: '2025-12-12',
+      },
+      {
+        property_name: 'Cosy Family House',
+        guest_name: 'Rachel Cummings',
+        check_in_date: '2025-12-10',
+        check_out_date: '2025-12-15',
+      },
+    ];
+
+    const properties = [
+      {
+        property_id: 6,
+        host_id: 1,
+        name: 'Luxury Penthouse with View',
+        location: 'London, UK',
+        property_type: 'Apartment',
+        price_per_night: '250',
+        description: 'Description of Luxury Penthouse with View.',
+      },
+      {
+        property_id: 2,
+        host_id: 1,
+        name: 'Cosy Family House',
+        location: 'Manchester, UK',
+        property_type: 'House',
+        price_per_night: '150',
+        description: 'Description of Cosy Family House.',
+      },
+    ];
+
+    expect(insertBookings(bookings, properties)).toEqual([
+      [6, '2025-12-08', '2025-12-12'],
+      [2, '2025-12-10', '2025-12-15'],
+    ]);
+  });
+
+  test('should iterate through the first arg replacing the guest name with the corresponding id from the third arg', () => {
+    const bookings = [
+      {
+        property_name: 'Luxury Penthouse with View',
+        guest_name: 'Bob Smith',
+        check_in_date: '2025-12-08',
+        check_out_date: '2025-12-12',
+      },
+      {
+        property_name: 'Cosy Family House',
+        guest_name: 'Rachel Cummings',
+        check_in_date: '2025-12-10',
+        check_out_date: '2025-12-15',
+      },
+    ];
+
+    const properties = [
+      {
+        property_id: 6,
+        host_id: 1,
+        name: 'Luxury Penthouse with View',
+        location: 'London, UK',
+        property_type: 'Apartment',
+        price_per_night: '250',
+        description: 'Description of Luxury Penthouse with View.',
+      },
+      {
+        property_id: 2,
+        host_id: 1,
+        name: 'Cosy Family House',
+        location: 'Manchester, UK',
+        property_type: 'House',
+        price_per_night: '150',
+        description: 'Description of Cosy Family House.',
+      },
+    ];
+
+    const users = [
+      {
+        user_id: 2,
+        first_name: 'Bob',
+        surname: 'Smith',
+        email: 'bob@example.com',
+        phone_number: '+44 7000 222222',
+        is_host: false,
+        avatar: 'https://example.com/images/bob.jpg',
+      },
+      {
+        user_id: 6,
+        first_name: 'Rachel',
+        surname: 'Cummings',
+        email: 'rachel@example.com',
+        phone_number: '+44 7000 666666',
+        is_host: false,
+        avatar: 'https://example.com/images/rachel.jpg',
+      },
+    ];
+
+    expect(insertBookings(bookings, properties, users)).toEqual([
+      [6, 2, '2025-12-08', '2025-12-12'],
+      [2, 6, '2025-12-10', '2025-12-15'],
+    ]);
+  });
+});

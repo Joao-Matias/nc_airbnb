@@ -132,9 +132,34 @@ const insertPropertiesAmenities = (propertiesData, insertedProperties, insertAme
     });
   });
 
-  console.log(updatedPropertiesAmenities);
-
   return updatedPropertiesAmenities;
+};
+
+const insertBookings = (bookings, properties, users = []) => {
+  const changedBookings = bookings.map((booking) => {
+    const newBookingsData = [];
+
+    for (let i = 0; i < properties.length; i++) {
+      if (booking.property_name === properties[i].name) {
+        newBookingsData.push(properties[i].property_id);
+      }
+    }
+
+    for (let i = 0; i < users.length; i++) {
+      if (booking.guest_name === users[i].first_name + ' ' + users[i].surname) {
+        newBookingsData.push(users[i].user_id);
+      }
+    }
+
+    newBookingsData.push(booking.check_in_date);
+    newBookingsData.push(booking.check_out_date);
+
+    console.log(newBookingsData);
+    return newBookingsData;
+  });
+
+  console.log(changedBookings);
+  return changedBookings;
 };
 
 module.exports = {
@@ -144,4 +169,5 @@ module.exports = {
   insertFavourites,
   insertPropertiesAmenities,
   insertAmenities,
+  insertBookings,
 };
