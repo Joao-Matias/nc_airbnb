@@ -1,3 +1,4 @@
+const { propertiesData } = require('..');
 const {
   insertProperties,
   insertReviews,
@@ -620,6 +621,52 @@ describe('insertAmenities', () => {
     ];
 
     expect(insertAmenities(properties)).toEqual([['WiFi'], ['TV'], ['Kitchen'], ['Parking']]);
+  });
+});
+
+describe('insertPropertiesAmenities', () => {
+  test('should return an array', () => {
+    expect(insertPropertiesAmenities([])).toEqual([]);
+  });
+
+  test('should iterate through the first arg the number of times equal to the number of amenities returning always the corresponding id from the second arg and the amenity', () => {
+    const propertiesData = [
+      {
+        name: 'Chic Studio Near the Beach',
+        property_type: 'Studio',
+        location: 'Brighton, UK',
+        price_per_night: 90.0,
+        description: 'Description of Chic Studio Near the Beach.',
+        host_name: 'Alice Johnson',
+        amenities: ['WiFi', 'Kitchen', 'Parking'],
+      },
+    ];
+
+    const insertedProperties = [
+      {
+        property_id: 3,
+        host_id: 1,
+        name: 'Chic Studio Near the Beach',
+        location: 'Brighton, UK',
+        property_type: 'Studio',
+        price_per_night: '90',
+        description: 'Description of Chic Studio Near the Beach.',
+      },
+    ];
+
+    const insertedAmenities = [
+      { amenity: 'WiFi' },
+      { amenity: 'TV' },
+      { amenity: 'Kitchen' },
+      { amenity: 'Parking' },
+      { amenity: 'Washer' },
+    ];
+
+    expect(insertPropertiesAmenities(propertiesData, insertedProperties, insertedAmenities)).toEqual([
+      [3, 'WiFi'],
+      [3, 'Kitchen'],
+      [3, 'Parking'],
+    ]);
   });
 });
 

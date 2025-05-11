@@ -57,7 +57,6 @@ const createAllTables = async () => {
       property_amenitiy_id SERIAL PRIMARY KEY,
       property_id INTEGER REFERENCES properties(property_id) NOT NULL,
       amenity_slug VARCHAR REFERENCES amenities(amenity) NOT NULL
-
       );`);
 };
 

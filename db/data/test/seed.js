@@ -6,6 +6,7 @@ const {
   insertImages,
   insertFavourites,
   insertAmenities,
+  insertPropertiesAmenities,
 } = require('./util-functions/insertData');
 const dropAllTables = require('./util-functions/drop-tables');
 const createAllTables = require('./util-functions/create-tables');
@@ -84,7 +85,14 @@ async function seed(usersData, propertyTypesData, propertiesData, reviewsData, i
     )
   );
 
-  console.log(insertedAmenities);
+  const { rows: insertedPropertiesAmenities } = await db.query(
+    format(
+      `INSERT INTO properties_amenities(
+      property_id,amenity_slug
+      ) VALUES %L RETURNING *;`,
+      insertPropertiesAmenities(propertiesData, insertedProperties, insertedAmenities)
+    )
+  );
 }
 
 module.exports = seed;

@@ -119,7 +119,23 @@ const insertAmenities = (properties) => {
   });
 };
 
-const insertPropertiesAmenities = (propertiesAmenities, properties, insertedAmenities) => {};
+const insertPropertiesAmenities = (propertiesData, insertedProperties, insertAmenities) => {
+  let updatedPropertiesAmenities = [];
+
+  propertiesData.map((property) => {
+    insertAmenities.forEach(({ amenity }) => {
+      insertedProperties.forEach((insertedProperty) => {
+        if (insertedProperty.name === property.name && property.amenities.includes(amenity)) {
+          updatedPropertiesAmenities = [...updatedPropertiesAmenities, [insertedProperty.property_id, amenity]];
+        }
+      });
+    });
+  });
+
+  console.log(updatedPropertiesAmenities);
+
+  return updatedPropertiesAmenities;
+};
 
 module.exports = {
   insertProperties,
