@@ -5,5 +5,3 @@ exports.propertiesData = require('./properties.json');
 exports.propertyTypesData = require('./property-types.json');
 exports.reviewsData = require('./reviews.json');
 exports.usersData = require('./users.json');
-exports.amenititesData = require('./amenities.json');
-exports.propertiesAmenitiesData = require('./properties-amenities.json');

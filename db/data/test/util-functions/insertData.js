@@ -103,29 +103,29 @@ const insertFavourites = (favourites, users = [], properties = []) => {
   return changedFavourites;
 };
 
-const insertPropertiesAmenities = (propertiesAmenities, properties, aminities) => {
-  const changedAmenitiesPerProperty = propertiesAmenities.map((propertyAmenity) => {
-    const { property_name: propertyName, aminity_name: aminityName } = propertyAmenity;
+const insertAmenities = (properties) => {
+  let updatedAmenities = [];
 
-    const updatedAmenityPerProperty = [];
-    for (let i = 0; i < properties.length; i++) {
-      if (properties[i].name === propertyName) {
-        const propertyId = properties[i].property_id;
-        updatedAmenityPerProperty.push(propertyId);
+  properties.map((property) => {
+    property.amenities.forEach((amenity) => {
+      if (!updatedAmenities.includes(amenity)) {
+        updatedAmenities = [...updatedAmenities, amenity];
       }
-    }
-
-    if (aminities) {
-      for (let i = 0; i < aminities.length; i++) {
-        if (aminities[i].amenity === aminityName) {
-          const aminitySlug = aminities[i].amenity;
-          updatedAmenityPerProperty.push(aminitySlug);
-        }
-      }
-    }
-
-    return updatedAmenityPerProperty;
+    });
   });
-  return changedAmenitiesPerProperty;
+
+  return updatedAmenities.map((amenity) => {
+    return [amenity];
+  });
 };
-module.exports = { insertProperties, insertReviews, insertImages, insertFavourites, insertPropertiesAmenities };
+
+const insertPropertiesAmenities = (propertiesAmenities, properties, insertedAmenities) => {};
+
+module.exports = {
+  insertProperties,
+  insertReviews,
+  insertImages,
+  insertFavourites,
+  insertPropertiesAmenities,
+  insertAmenities,
+};

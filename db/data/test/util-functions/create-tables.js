@@ -41,23 +41,24 @@ const createAllTables = async () => {
         property_id INTEGER REFERENCES properties(property_id) NOT NULL,
         image_url VARCHAR NOT NULL,
         alt_text VARCHAR NOT NULL
-  )`);
+  );`);
 
   await db.query(`CREATE TABLE favourites(
         favourite_id SERIAL PRIMARY KEY,
         guest_id INTEGER REFERENCES users(user_id) NOT NULL,
         property_id INTEGER REFERENCES properties(property_id) NOT NULL
-    )`);
+    );`);
 
   await db.query(`CREATE TABLE amenities(
       amenity VARCHAR PRIMARY KEY 
-      )`);
+      );`);
 
   await db.query(`CREATE TABLE properties_amenities(
       property_amenitiy_id SERIAL PRIMARY KEY,
       property_id INTEGER REFERENCES properties(property_id) NOT NULL,
       amenity_slug VARCHAR REFERENCES amenities(amenity) NOT NULL
-      )`);
+
+      );`);
 };
 
 module.exports = createAllTables;
