@@ -53,26 +53,26 @@ const insertReviews = (reviews, users, properties) => {
   return mappedReview;
 };
 
-const insertImages = (images, properties = []) => {
-  const changedImages = images.map((image) => {
-    const newImage = [];
-
-    const { property_name: propertyName, image_url: imageUrl, alt_tag: altTag } = image;
-
+const insertImages = (images, properties) => {
+  let propertyId = [];
+  if (properties) {
     for (let i = 0; i < properties.length; i++) {
-      if (properties[i].name === propertyName) {
-        const propertyId = properties[i].property_id;
-        newImage.push(propertyId);
-      }
+      propertyId = { ...propertyId, [properties[i].name]: properties[i].property_id };
     }
+  }
 
-    newImage.push(imageUrl);
-    newImage.push(altTag);
+  const mappedImages = images.map((image) => {
+    const { property_name, image_url, alt_tag } = image;
 
-    return newImage;
+    const updatedReview = [];
+    if (properties) updatedReview.push(propertyId[property_name]);
+    updatedReview.push(image_url);
+    updatedReview.push(alt_tag);
+
+    return updatedReview;
   });
 
-  return changedImages;
+  return mappedImages;
 };
 
 const insertFavourites = (favourites, users = [], properties = []) => {
