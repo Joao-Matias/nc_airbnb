@@ -102,24 +102,21 @@ const insertFavourites = (favourites, users, properties) => {
   });
 
   return mappedFavourites;
-
-  return changedFavourites;
 };
 
 const insertAmenities = (properties) => {
-  let updatedAmenities = [];
+  let allAmenities = [];
+  for (let i = 0; i < properties.length; i++) {
+    allAmenities.push(...properties[i].amenities);
+  }
 
-  properties.map((property) => {
-    property.amenities.forEach((amenity) => {
-      if (!updatedAmenities.includes(amenity)) {
-        updatedAmenities = [...updatedAmenities, amenity];
-      }
-    });
-  });
+  let filteredAmenites = allAmenities.filter((amenity, index) => allAmenities.indexOf(amenity) === index);
 
-  return updatedAmenities.map((amenity) => {
+  const updatedAmenities = filteredAmenites.map((amenity) => {
     return [amenity];
   });
+
+  return updatedAmenities;
 };
 
 const insertPropertiesAmenities = (propertiesData, insertedProperties, insertAmenities) => {
