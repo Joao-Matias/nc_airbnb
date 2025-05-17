@@ -1,25 +1,25 @@
-const insertProperties = (arr, users) => {
-  const newArr = arr.map((obj) => {
-    const { name, location, price_per_night, description, property_type: propertyType, host_name: hostName } = obj;
-
-    let hostId;
-    if (users) {
-      for (let i = 0; i < users.length; i++) {
-        if (users[i].first_name + ' ' + users[i].surname === hostName) {
-          hostId = users[i].user_id;
-        }
-      }
+const insertProperties = (properties, users) => {
+  let hostId = [];
+  if (users) {
+    for (let i = 0; i < users.length; i++) {
+      const userName = users[i].first_name + ' ' + users[i].surname;
+      hostId = { ...hostId, [userName]: users[i].user_id };
     }
+  }
 
-    let pricePerNight;
+  const mappedProperties = properties.map((property) => {
+    const { name, location, price_per_night, description, property_type, host_name } = property;
+
+    let pricePerNightStr;
+
     if (price_per_night) {
-      pricePerNight = price_per_night.toString();
+      pricePerNightStr = price_per_night.toString();
     }
 
-    return [name, location, pricePerNight, description, propertyType, hostId];
+    return [name, location, pricePerNightStr, description, property_type, hostId[host_name]];
   });
 
-  return newArr;
+  return mappedProperties;
 };
 
 const insertReviews = (reviews, users = [], properties = []) => {
