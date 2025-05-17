@@ -1,4 +1,4 @@
-const db = require('./connection');
+const db = require('../connection');
 const format = require('pg-format');
 const {
   insertProperties,
@@ -8,11 +8,9 @@ const {
   insertAmenities,
   insertPropertiesAmenities,
   insertBookings,
-} = require('./util-functions/insertData');
-const dropAllTables = require('./util-functions/drop-tables');
-const createAllTables = require('./util-functions/create-tables');
+} = require('./insertData');
 
-async function seed(
+const addDataTables = async (
   usersData,
   propertyTypesData,
   propertiesData,
@@ -20,24 +18,22 @@ async function seed(
   imagesData,
   favouritesData,
   bookingsData
-) {
-  await dropAllTables();
+) => {
+  const users = usersData.map(({ first_name, surname, email, phone_number, role, avatar }) => [
+    first_name,
+    surname,
+    email,
+    phone_number,
+    role === 'host' ? true : false,
+    avatar,
+  ]);
 
-  await createAllTables();
-
-  const { rows: insertedUsers } = await db.query(
+  const { rows: returnedUsers } = await db.query(
     format(
       `INSERT INTO users(
-          first_name,surname,email,phone_number,is_host,avatar
-          ) VALUES %L RETURNING *;`,
-      usersData.map(({ first_name, surname, email, phone_number, role, avatar }) => [
-        first_name,
-        surname,
-        email,
-        phone_number,
-        role === 'host' ? true : false,
-        avatar,
-      ])
+              first_name,surname,email,phone_number,is_host,avatar
+              ) VALUES %L RETURNING *;`,
+      users
     )
   );
 
@@ -50,12 +46,12 @@ async function seed(
     )
   );
 
-  const { rows: insertedProperties } = await db.query(
+  const { rows: returnedProperties } = await db.query(
     format(
       `INSERT INTO properties(
         name,location,price_per_night,description,property_type,host_id
           ) VALUES %L RETURNING *;`,
-      insertProperties(propertiesData, insertedUsers)
+      insertProperties(propertiesData, returnedUsers)
     )
   );
 
@@ -64,7 +60,7 @@ async function seed(
       `INSERT INTO reviews(
       property_id,guest_id,rating,comment
       ) VALUES %L;`,
-      insertReviews(reviewsData, insertedUsers, insertedProperties)
+      insertReviews(reviewsData, returnedUsers, returnedProperties)
     )
   );
 
@@ -73,7 +69,7 @@ async function seed(
       `INSERT INTO images(
       property_id,image_url,alt_text
       ) VALUES %L;`,
-      insertImages(imagesData, insertedProperties)
+      insertImages(imagesData, returnedProperties)
     )
   );
 
@@ -82,11 +78,11 @@ async function seed(
       `INSERT INTO favourites(
       guest_id,property_id
       ) VALUES %L;`,
-      insertFavourites(favouritesData, insertedUsers, insertedProperties)
+      insertFavourites(favouritesData, returnedUsers, returnedProperties)
     )
   );
 
-  const { rows: insertedAmenities } = await db.query(
+  const { rows: returnedAmenities } = await db.query(
     format(
       `INSERT INTO amenities(
       amenity
@@ -95,26 +91,23 @@ async function seed(
     )
   );
 
-  const { rows: insertedPropertiesAmenities } = await db.query(
+  const { rows: returnedPropertiesAmenities } = await db.query(
     format(
       `INSERT INTO properties_amenities(
       property_id,amenity_slug
       ) VALUES %L RETURNING *;`,
-      insertPropertiesAmenities(propertiesData, insertedProperties, insertedAmenities)
+      insertPropertiesAmenities(propertiesData, returnedProperties, returnedAmenities)
     )
   );
-
-  console.log(insertedProperties);
-  console.log(insertedUsers);
 
   const { rows: insertedBookings } = await db.query(
     format(
       `INSERT INTO bookings(
       property_id,guest_id,check_in_date,check_out_date
       ) VALUES %L RETURNING *;`,
-      insertBookings(bookingsData, insertedProperties, insertedUsers)
+      insertBookings(bookingsData, returnedProperties, returnedUsers)
     )
   );
-}
+};
 
-module.exports = seed;
+module.exports = { addDataTables };

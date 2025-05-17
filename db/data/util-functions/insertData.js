@@ -154,11 +154,9 @@ const insertBookings = (bookings, properties, users = []) => {
     newBookingsData.push(booking.check_in_date);
     newBookingsData.push(booking.check_out_date);
 
-    console.log(newBookingsData);
     return newBookingsData;
   });
 
-  console.log(changedBookings);
   return changedBookings;
 };
 
