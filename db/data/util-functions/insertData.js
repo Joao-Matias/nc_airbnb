@@ -64,40 +64,44 @@ const insertImages = (images, properties) => {
   const mappedImages = images.map((image) => {
     const { property_name, image_url, alt_tag } = image;
 
-    const updatedReview = [];
-    if (properties) updatedReview.push(propertyId[property_name]);
-    updatedReview.push(image_url);
-    updatedReview.push(alt_tag);
+    const updatedImages = [];
+    if (properties) updatedImages.push(propertyId[property_name]);
+    updatedImages.push(image_url);
+    updatedImages.push(alt_tag);
 
-    return updatedReview;
+    return updatedImages;
   });
 
   return mappedImages;
 };
 
-const insertFavourites = (favourites, users = [], properties = []) => {
-  const changedFavourites = favourites.map((favouriteObj) => {
-    const { guest_name: guestName, property_name: propertyName } = favouriteObj;
-
-    const newFavouriteData = [];
-
+const insertFavourites = (favourites, users, properties) => {
+  let usersId = [];
+  if (users) {
     for (let i = 0; i < users.length; i++) {
-      const { first_name: firstName, surname, user_id: userId } = users[i];
-      if (firstName + ' ' + surname === guestName) {
-        const guestId = userId;
-        newFavouriteData.push(guestId);
-      }
+      const userName = users[i].first_name + ' ' + users[i].surname;
+      usersId = { ...usersId, [userName]: users[i].user_id };
     }
+  }
 
+  let propertiesId = [];
+  if (properties) {
     for (let i = 0; i < properties.length; i++) {
-      if (properties[i].name === propertyName) {
-        const propertyId = properties[i].property_id;
-        newFavouriteData.push(propertyId);
-      }
+      propertiesId = { ...propertiesId, [properties[i].name]: properties[i].property_id };
     }
+  }
 
-    return newFavouriteData;
+  const mappedFavourites = favourites.map((favouriteObj) => {
+    const { guest_name, property_name } = favouriteObj;
+
+    const updatedFavourites = [];
+    if (users) updatedFavourites.push(usersId[guest_name]);
+    if (properties) updatedFavourites.push(propertiesId[property_name]);
+
+    return updatedFavourites;
   });
+
+  return mappedFavourites;
 
   return changedFavourites;
 };
