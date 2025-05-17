@@ -22,36 +22,35 @@ const insertProperties = (properties, users) => {
   return mappedProperties;
 };
 
-const insertReviews = (reviews, users = [], properties = []) => {
-  const changedReviews = reviews.map((review) => {
-    const { guest_name: guestName, rating, comment, property_name: propertyName } = review;
-
-    const newReview = [];
-
-    for (let i = 0; i < properties.length; i++) {
-      if (properties[i].name === propertyName) {
-        const propertyId = properties[i].property_id;
-        newReview.push(propertyId);
-      }
-    }
-
+const insertReviews = (reviews, users, properties) => {
+  let userId = [];
+  if (users) {
     for (let i = 0; i < users.length; i++) {
-      if (users[i].first_name + ' ' + users[i].surname === guestName) {
-        const hostId = users[i].user_id;
-        newReview.push(hostId);
-      }
+      const userName = users[i].first_name + ' ' + users[i].surname;
+      userId = { ...userId, [userName]: users[i].user_id };
     }
+  }
 
-    newReview.push(rating);
-
-    if (comment) {
-      newReview.push(comment);
+  let propertyId = [];
+  if (properties) {
+    for (let i = 0; i < properties.length; i++) {
+      propertyId = { ...propertyId, [properties[i].name]: properties[i].property_id };
     }
+  }
 
-    return newReview;
+  const mappedReview = reviews.map((review) => {
+    const { guest_name, rating, comment, property_name } = review;
+
+    const updatedReview = [];
+    if (properties) updatedReview.push(propertyId[property_name]);
+    if (users) updatedReview.push(userId[guest_name]);
+    updatedReview.push(rating);
+    if (comment) updatedReview.push(comment);
+
+    return updatedReview;
   });
 
-  return changedReviews;
+  return mappedReview;
 };
 
 const insertImages = (images, properties = []) => {
