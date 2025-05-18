@@ -148,29 +148,39 @@ const insertPropertiesAmenities = (propertiesData, insertedProperties, insertAme
   return updatedPropertiesAmenities;
 };
 
-const insertBookings = (bookings, properties, users = []) => {
-  const changedBookings = bookings.map((booking) => {
-    const newBookingsData = [];
+const insertBookings = (bookings, properties, users) => {
+  let bookingsId = [];
+  for (let i = 0; i < bookings.length; i++) {
+    bookingsId = { ...bookingsId, [bookings[i].property_name]: bookings[i].guest_name };
+  }
 
+  let propertiesId = [];
+  if (properties) {
     for (let i = 0; i < properties.length; i++) {
-      if (booking.property_name === properties[i].name) {
-        newBookingsData.push(properties[i].property_id);
-      }
+      propertiesId = { ...propertiesId, [properties[i].name]: properties[i].property_id };
     }
+  }
 
+  let usersId = [];
+  if (users) {
     for (let i = 0; i < users.length; i++) {
-      if (booking.guest_name === users[i].first_name + ' ' + users[i].surname) {
-        newBookingsData.push(users[i].user_id);
-      }
+      const userName = users[i].first_name + ' ' + users[i].surname;
+      usersId = { ...usersId, [userName]: users[i].user_id };
     }
+  }
 
-    newBookingsData.push(booking.check_in_date);
-    newBookingsData.push(booking.check_out_date);
+  const updatedBookings = bookings.map((booking) => {
+    const { property_name, guest_name, check_in_date, check_out_date } = booking;
 
-    return newBookingsData;
+    const filteredBookings = [];
+    filteredBookings.push(propertiesId[property_name]);
+    if (users) filteredBookings.push(usersId[guest_name]);
+    if (check_in_date) filteredBookings.push(check_in_date);
+    if (check_out_date) filteredBookings.push(check_out_date);
+    return filteredBookings;
   });
 
-  return changedBookings;
+  return updatedBookings;
 };
 
 module.exports = {
