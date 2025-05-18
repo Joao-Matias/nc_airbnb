@@ -119,18 +119,31 @@ const insertAmenities = (properties) => {
   return updatedAmenities;
 };
 
-const insertPropertiesAmenities = (propertiesData, insertedProperties, insertAmenities) => {
-  let updatedPropertiesAmenities = [];
+const insertPropertiesAmenities = (propertiesData, insertedProperties, insertAmenities = []) => {
+  let allAmenities = [];
+  for (let i = 0; i < propertiesData.length; i++) {
+    allAmenities = { ...allAmenities, [propertiesData[i].name]: propertiesData[i].amenities };
+  }
 
-  propertiesData.map((property) => {
-    insertAmenities.forEach(({ amenity }) => {
-      insertedProperties.forEach((insertedProperty) => {
-        if (insertedProperty.name === property.name && property.amenities.includes(amenity)) {
-          updatedPropertiesAmenities = [...updatedPropertiesAmenities, [insertedProperty.property_id, amenity]];
-        }
-      });
+  let propertiesId = [];
+  if (insertedProperties) {
+    for (let i = 0; i < insertedProperties.length; i++) {
+      propertiesId = { ...propertiesId, [insertedProperties[i].property_id]: allAmenities[insertedProperties[i].name] };
+    }
+  }
+
+  let updatedPropertiesAmenities = [];
+  for (const key in propertiesId) {
+    const filteredAmenities = propertiesId[key].filter(
+      (amenity, index) => propertiesId[key].indexOf(amenity) === index
+    );
+
+    const noDuplicatedAmenities = filteredAmenities.map((amenity) => {
+      return [key, amenity];
     });
-  });
+
+    updatedPropertiesAmenities.push(...noDuplicatedAmenities);
+  }
 
   return updatedPropertiesAmenities;
 };

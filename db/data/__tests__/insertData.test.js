@@ -663,9 +663,9 @@ describe('insertPropertiesAmenities', () => {
     ];
 
     expect(insertPropertiesAmenities(propertiesData, insertedProperties, insertedAmenities)).toEqual([
-      [3, 'WiFi'],
-      [3, 'Kitchen'],
-      [3, 'Parking'],
+      ['3', 'WiFi'],
+      ['3', 'Kitchen'],
+      ['3', 'Parking'],
     ]);
   });
 });
