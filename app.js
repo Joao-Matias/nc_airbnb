@@ -1,13 +1,15 @@
 const express = require('express');
 
 const { getUserById } = require('./controllers/users.controller');
+const { handlePathNotFound, handleBadRequest, handleCustomErrors } = require('./controllers/errors.controller');
 
 const app = express();
 
-app.get('/api/users/:userId', getUserById);
+app.get('/api/users/:id', getUserById);
 
-app.all('/*invalid_path', (req, res, next) => {
-  res.status(404).send({ msg: 'Path not found.' });
-});
+app.all('/*invalid_path', handlePathNotFound);
+
+app.use(handleCustomErrors);
+app.use(handleBadRequest);
 
 module.exports = app;

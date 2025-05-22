@@ -13,28 +13,32 @@ describe('app', () => {
     expect(body.msg).toBe('Path not found.');
   });
 
-  describe('GET /api/users', () => {
-    test('respond with a status of 200 and an array', async () => {
-      const { body } = await request(app).get('/api/users/1').expect(200);
-
-      console.log(body);
-      expect(Array.isArray(body.user)).toBe(true);
+  describe('GET /api/users/:id', () => {
+    test('respond with a status of 200', async () => {
+      await request(app).get('/api/users/1').expect(200);
     });
 
     test('respond with the following properties - user_id,first_name,surname,email,phone_number,avatar,created_at', async () => {
       const { body } = await request(app).get('/api/users/1');
 
-      expect(body.user.length > 0).toBe(true);
+      expect(body.user.hasOwnProperty('user_id')).toBe(true);
+      expect(body.user.hasOwnProperty('first_name')).toBe(true);
+      expect(body.user.hasOwnProperty('surname')).toBe(true);
+      expect(body.user.hasOwnProperty('email')).toBe(true);
+      expect(body.user.hasOwnProperty('phone_number')).toBe(true);
+      expect(body.user.hasOwnProperty('avatar')).toBe(true);
+      expect(body.user.hasOwnProperty('created_at')).toBe(true);
+    });
 
-      body.user.forEach((user) => {
-        expect(user.hasOwnProperty('user_id')).toBe(true);
-        expect(user.hasOwnProperty('first_name')).toBe(true);
-        expect(user.hasOwnProperty('surname')).toBe(true);
-        expect(user.hasOwnProperty('email')).toBe(true);
-        expect(user.hasOwnProperty('phone_number')).toBe(true);
-        expect(user.hasOwnProperty('avatar')).toBe(true);
-        expect(user.hasOwnProperty('created_at')).toBe(true);
-      });
+    test('invalid Id responds with 400 and msg', async () => {
+      const { body } = await request(app).get('/api/users/invalid_id').expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+    test('valid ID by non-existent responds with 404 and msg', async () => {
+      const { body } = await request(app).get('/api/users/999').expect(404);
+
+      expect(body.msg).toBe('User not found.');
     });
   });
 });
