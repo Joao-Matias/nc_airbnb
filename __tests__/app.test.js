@@ -41,4 +41,28 @@ describe('app', () => {
       expect(body.msg).toBe('User not found.');
     });
   });
+
+  describe('GET /api/properties', () => {
+    test('respond with a status of 200 and an array', async () => {
+      const { body } = await request(app).get('/api/properties').expect(200);
+
+      expect(Array.isArray(body.properties)).toBe(true);
+    });
+
+    test('responds with the following properties - property_id,property_name,location,price_per_night,host', async () => {
+      const { body } = await request(app).get('/api/properties').expect(200);
+
+      expect(body.properties.length > 0).toBe(true);
+
+      body.properties.forEach((property) => {
+        expect(property.hasOwnProperty('property_id')).toBe(true);
+        expect(property.hasOwnProperty('property_name')).toBe(true);
+        expect(property.hasOwnProperty('location')).toBe(true);
+        expect(property.hasOwnProperty('price_per_night')).toBe(true);
+        expect(property.hasOwnProperty('host')).toBe(true);
+      });
+    });
+
+    test('>>>UNSURE<<< about sad paths with this endpoint & how to order', () => {});
+  });
 });
