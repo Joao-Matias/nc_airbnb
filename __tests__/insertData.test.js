@@ -6,7 +6,7 @@ const {
   insertPropertiesAmenities,
   insertAmenities,
   insertBookings,
-} = require('../util-functions/insertData');
+} = require('../db/data/util-functions/insertData');
 
 describe('insertProperties', () => {
   test('should always return an array', () => {
