@@ -65,4 +65,25 @@ describe('app', () => {
 
     test('>>>UNSURE<<< about sad paths with this endpoint & how to order', () => {});
   });
+
+  describe(' GET /api/properties/:id', () => {
+    test('respond with a status of 200', async () => {
+      await request(app).get('/api/properties/1').expect(200);
+    });
+
+    test('respond with the following properties - property_id,property_name,location,price_per_night,description,host,host_avatar,favourite_count', async () => {
+      const { body } = await request(app).get('/api/properties/1');
+
+      expect(body.property.hasOwnProperty('property_id')).toBe(true);
+      expect(body.property.hasOwnProperty('property_name')).toBe(true);
+      expect(body.property.hasOwnProperty('location')).toBe(true);
+      expect(body.property.hasOwnProperty('price_per_night')).toBe(true);
+      expect(body.property.hasOwnProperty('description')).toBe(true);
+      expect(body.property.hasOwnProperty('host')).toBe(true);
+      expect(body.property.hasOwnProperty('host_avatar')).toBe(true);
+      expect(body.property.hasOwnProperty('favourite_count')).toBe(true);
+    });
+
+    test('should take a aditional query ', () => {});
+  });
 });

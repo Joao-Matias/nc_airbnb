@@ -6,7 +6,8 @@ const fetchProperties = async () => {
     FROM properties
     JOIN users
     ON properties.host_id=users.user_id
-    JOIN favourites ON properties.property_id = favourites.property_id 
+    JOIN favourites ON 
+    properties.property_id = favourites.property_id 
     GROUP BY favourites.property_id,property_name,properties.location,properties.price_per_night,users.first_name,users.surname
     ORDER BY COUNT(favourites.property_id) DESC
     ;`);
@@ -14,4 +15,24 @@ const fetchProperties = async () => {
   return properties;
 };
 
-module.exports = { fetchProperties };
+const fetchPropertyById = async (id) => {
+  const {
+    rows: [property],
+  } = await db.query(
+    `SELECT
+    properties.property_id,name AS property_name, location, price_per_night,description, CONCAT(first_name,' ',surname) AS host, avatar AS host_avatar, COUNT(favourites.property_id) AS favourite_count
+    FROM properties 
+    JOIN users
+    ON properties.host_id = users.user_id
+    JOIN favourites
+    ON properties.property_id = favourites.property_id
+    WHERE properties.property_id = $1
+    GROUP BY properties.property_id, properties.location, properties.price_per_night, properties.description, users.first_name,users.surname, users.avatar;
+    `,
+    [id]
+  );
+
+  return property;
+};
+
+module.exports = { fetchProperties, fetchPropertyById };
