@@ -90,5 +90,16 @@ describe('app', () => {
       expect(body.property.hasOwnProperty('favourited')).toBe(true);
       expect(body.property.favourited).toBe(false);
     });
+
+    test('invalid property Id responds with 400 and msg', async () => {
+      const { body } = await request(app).get('/api/properties/invalid_id').expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+    test('valid property ID by non-existent responds with 404 and msg', async () => {
+      const { body } = await request(app).get('/api/properties/999?user_id=100').expect(404);
+
+      expect(body.msg).toBe('Property not found.');
+    });
   });
 });

@@ -40,6 +40,12 @@ const fetchPropertyById = async (propertyId, userId) => {
     queryValues
   );
 
+  console.log(property);
+
+  if (property === undefined) {
+    return Promise.reject({ status: 404, msg: 'Property not found.' });
+  }
+
   return property;
 };
 
