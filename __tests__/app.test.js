@@ -63,7 +63,7 @@ describe('app', () => {
       });
     });
 
-    test('>>>UNSURE<<< about sad paths with this endpoint & how to order', () => {});
+    test('>>>UNSURE<<< about sad paths with this endpoint & how to order the test', () => {});
   });
 
   describe(' GET /api/properties/:id', () => {
@@ -100,6 +100,29 @@ describe('app', () => {
       const { body } = await request(app).get('/api/properties/999?user_id=100').expect(404);
 
       expect(body.msg).toBe('Property not found.');
+    });
+  });
+
+  describe('GET /api/properties/:id/reviews', () => {
+    test('should return a status 200 and an array', async () => {
+      const { body } = await request(app).get('/api/properties/1/reviews').expect(200);
+
+      expect(Array.isArray(body.reviews)).toBe(true);
+    });
+
+    test('reviews responds with the following properties - review_id,comment,rating,created_at,guest,guest_avatar', async () => {
+      const { body } = await request(app).get('/api/properties/1/reviews');
+
+      expect(body.reviews.length > 0).toBe(true);
+
+      body.reviews.forEach((review) => {
+        expect(review.hasOwnProperty('review_id')).toBe(true);
+        expect(review.hasOwnProperty('comment')).toBe(true);
+        expect(review.hasOwnProperty('rating')).toBe(true);
+        expect(review.hasOwnProperty('created_at')).toBe(true);
+        expect(review.hasOwnProperty('guest')).toBe(true);
+        expect(review.hasOwnProperty('guest_avatar')).toBe(true);
+      });
     });
   });
 });

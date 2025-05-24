@@ -1,4 +1,4 @@
-const { fetchProperties, fetchPropertyById } = require('../models/properties.model');
+const { fetchProperties, fetchPropertyById, fetchPropertyReviews } = require('../models/properties.model');
 
 const getProperties = async (req, res, next) => {
   const properties = await fetchProperties();
@@ -16,4 +16,21 @@ const getPropertyById = async (req, res, next) => {
     next(error);
   }
 };
-module.exports = { getProperties, getPropertyById };
+
+const getPropertyReviews = async (req, res, next) => {
+  const { id } = req.params;
+
+  const reviews = await fetchPropertyReviews(id);
+
+  let reviewRatingsSum = 0;
+
+  reviews.forEach((review) => {
+    reviewRatingsSum += review.rating;
+  });
+
+  const average_rating = reviewRatingsSum / reviews.length;
+
+  res.status(200).send({ reviews, average_rating });
+};
+
+module.exports = { getProperties, getPropertyById, getPropertyReviews };

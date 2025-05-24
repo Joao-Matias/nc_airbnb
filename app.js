@@ -2,12 +2,13 @@ const express = require('express');
 
 const { getUserById } = require('./controllers/users.controller');
 const { handlePathNotFound, handleBadRequest, handleCustomErrors } = require('./controllers/errors.controller');
-const { getProperties, getPropertyById } = require('./controllers/properties.controller');
+const { getProperties, getPropertyById, getPropertyReviews } = require('./controllers/properties.controller');
 
 const app = express();
 
 app.get('/api/properties', getProperties);
 app.get('/api/properties/:id', getPropertyById);
+app.get('/api/properties/:id/reviews', getPropertyReviews);
 
 app.get('/api/users/:id', getUserById);
 
