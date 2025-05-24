@@ -84,6 +84,11 @@ describe('app', () => {
       expect(body.property.hasOwnProperty('favourite_count')).toBe(true);
     });
 
-    test('should take a aditional query ', () => {});
+    test('should take a optional query of ?user_id and add a property - favourites - returning if the passed user has or not favourited the property in a boolean', async () => {
+      const { body } = await request(app).get('/api/properties/1?user_id=3');
+
+      expect(body.property.hasOwnProperty('favourited')).toBe(true);
+      expect(body.property.favourited).toBe(false);
+    });
   });
 });
