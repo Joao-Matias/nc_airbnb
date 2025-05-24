@@ -124,5 +124,16 @@ describe('app', () => {
         expect(review.hasOwnProperty('guest_avatar')).toBe(true);
       });
     });
+
+    test('invalid property Id responds with 400 and msg', async () => {
+      const { body } = await request(app).get('/api/properties/invalid_id/reviews').expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+    test('valid property ID by non-existent responds with 404 and msg', async () => {
+      const { body } = await request(app).get('/api/properties/99/reviews').expect(404);
+
+      expect(body.msg).toBe('Property not found.');
+    });
   });
 });

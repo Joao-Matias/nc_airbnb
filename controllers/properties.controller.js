@@ -20,17 +20,21 @@ const getPropertyById = async (req, res, next) => {
 const getPropertyReviews = async (req, res, next) => {
   const { id } = req.params;
 
-  const reviews = await fetchPropertyReviews(id);
+  try {
+    const reviews = await fetchPropertyReviews(id);
 
-  let reviewRatingsSum = 0;
+    let reviewRatingsSum = 0;
 
-  reviews.forEach((review) => {
-    reviewRatingsSum += review.rating;
-  });
+    reviews.forEach((review) => {
+      reviewRatingsSum += review.rating;
+    });
 
-  const average_rating = reviewRatingsSum / reviews.length;
+    const average_rating = reviewRatingsSum / reviews.length;
 
-  res.status(200).send({ reviews, average_rating });
+    res.status(200).send({ reviews, average_rating });
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = { getProperties, getPropertyById, getPropertyReviews };

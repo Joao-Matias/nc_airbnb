@@ -63,6 +63,10 @@ const fetchPropertyReviews = async (id) => {
     [id]
   );
 
+  if (reviews.length === 0) {
+    return Promise.reject({ status: 404, msg: 'Property not found.' });
+  }
+
   return reviews;
 };
 
