@@ -83,7 +83,7 @@ describe('app', () => {
       });
     });
 
-    test.only('response for the optional query of sort should be properties organised by the passed key', async () => {
+    test('response for the optional query of sort should be properties organised by the passed key', async () => {
       const { body } = await request(app).get('/api/properties?sort=cost_per_night');
 
       console.log(body.properties);
@@ -150,6 +150,12 @@ describe('app', () => {
         expect(review.hasOwnProperty('guest')).toBe(true);
         expect(review.hasOwnProperty('guest_avatar')).toBe(true);
       });
+    });
+
+    test('should respond order by the newest reviews to the oldest', async () => {
+      const { body } = await request(app).get('/api/properties/1/reviews');
+
+      expect(body.reviews).toBeSortedBy('created_at');
     });
 
     test('invalid property Id responds with 400 and msg', async () => {

@@ -3,7 +3,7 @@ const db = require('../db/connection');
 const fetchProperties = async (maxPrice, minPrice, sortBy) => {
   const queryValues = [];
   let whereStr = '';
-  let sortStr = ' COUNT(favourites.property_id)';
+  let sortStr = 'ORDER BY COUNT(favourites.property_id)';
 
   const validSortBy = ['cost_per_night', 'popularity'];
 
@@ -49,6 +49,8 @@ const fetchProperties = async (maxPrice, minPrice, sortBy) => {
     ${sortStr} DESC;`,
     queryValues
   );
+
+  console.log(properties);
 
   return properties;
 };
@@ -96,7 +98,7 @@ const fetchPropertyReviews = async (id) => {
     JOIN properties
     ON reviews.property_id = properties.property_id
     WHERE reviews.property_id = $1
-    ORDER BY reviews.created_at DESC;
+    ORDER BY reviews.created_at ASC;
     `,
     [id]
   );
