@@ -1,16 +1,54 @@
 const db = require('../db/connection');
 
-const fetchProperties = async () => {
-  const { rows: properties } = await db.query(`SELECT 
+const fetchProperties = async (maxPrice, minPrice, sortBy) => {
+  const queryValues = [];
+  let whereStr = '';
+  let sortStr = ' COUNT(favourites.property_id)';
+
+  const validSortBy = ['cost_per_night', 'popularity'];
+
+  if (maxPrice || minPrice) {
+    whereStr += ' WHERE properties.price_per_night';
+    if (maxPrice) {
+      queryValues.push(maxPrice);
+      whereStr += ` < $${queryValues.length}`;
+    }
+    if (!maxPrice && minPrice) {
+      queryValues.push(minPrice);
+      whereStr += ` > $${queryValues.length}`;
+    }
+    if (maxPrice && minPrice) {
+      queryValues.push(minPrice);
+      whereStr += ` AND properties.price_per_night > $${queryValues.length}`;
+    }
+  }
+
+  if (sortBy) {
+    sortStr = ` ORDER BY`;
+    if (!validSortBy.includes(sortBy)) {
+      return Promise.reject({ status: 400, msg: 'Invalid sort query.' });
+    } else {
+      if (sortBy === 'cost_per_night') {
+        sortStr += ` price_per_night`;
+      } else {
+        sortStr += ` ${sortBy}`;
+      }
+    }
+  }
+
+  const { rows: properties } = await db.query(
+    `SELECT 
     favourites.property_id ,name AS property_name,location,price_per_night, CONCAT(first_name,' ',surname) AS host
     FROM properties
     JOIN users
     ON properties.host_id=users.user_id
-    JOIN favourites ON 
-    properties.property_id = favourites.property_id 
+    JOIN favourites 
+    ON properties.property_id = favourites.property_id 
+    ${whereStr}
     GROUP BY favourites.property_id,property_name,properties.location,properties.price_per_night,users.first_name,users.surname
-    ORDER BY COUNT(favourites.property_id) DESC
-    ;`);
+    ${sortStr} DESC;`,
+    queryValues
+  );
 
   return properties;
 };

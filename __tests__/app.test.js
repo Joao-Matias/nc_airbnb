@@ -63,6 +63,33 @@ describe('app', () => {
       });
     });
 
+    test('response for the optional query of maxprice should be properties with the price per night lower that the value passed', async () => {
+      const valuePerNight = 100;
+
+      const { body } = await request(app).get(`/api/properties?maxprice=${valuePerNight}`);
+
+      body.properties.forEach((property) => {
+        expect(property.price_per_night < valuePerNight).toBe(true);
+      });
+    });
+
+    test('response for the optional query of minprice should be properties with the price per night higher that the value passed', async () => {
+      const valuePerNight = 100;
+
+      const { body } = await request(app).get(`/api/properties?minprice=${valuePerNight}`);
+
+      body.properties.forEach((property) => {
+        expect(property.price_per_night > valuePerNight).toBe(true);
+      });
+    });
+
+    test.only('response for the optional query of sort should be properties organised by the passed key', async () => {
+      const { body } = await request(app).get('/api/properties?sort=cost_per_night');
+
+      console.log(body.properties);
+      expect(body.properties).toBeSortedBy('price_per_night', { descending: true, coerce: true });
+    });
+
     test('>>>UNSURE<<< about sad paths with this endpoint & how to order the test', () => {});
   });
 
@@ -135,5 +162,7 @@ describe('app', () => {
 
       expect(body.msg).toBe('Property not found.');
     });
+
+    test('>>>UNSURE<<< how to order the test', () => {});
   });
 });

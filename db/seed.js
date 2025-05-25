@@ -1,6 +1,6 @@
-const dropAllTables = require('./util-functions/drop-tables');
-const createAllTables = require('./util-functions/create-tables');
-const { addDataTables } = require('./util-functions/add-data-tables');
+const dropAllTables = require('./db-util-functions/drop-tables');
+const createAllTables = require('./db-util-functions/create-tables');
+const { addDataTables } = require('./db-util-functions/add-data-tables');
 
 async function seed(
   usersData,
