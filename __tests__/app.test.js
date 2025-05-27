@@ -63,32 +63,76 @@ describe('app', () => {
       });
     });
 
-    test('response for the optional query of maxprice should be properties with the price per night lower that the value passed', async () => {
-      const valuePerNight = 100;
+    describe('MAXPRICE QUERY', () => {
+      test('response for the optional query of maxprice should be properties with the price per night lower that the value passed', async () => {
+        const valuePerNight = 100;
 
-      const { body } = await request(app).get(`/api/properties?maxprice=${valuePerNight}`);
+        const { body } = await request(app).get(`/api/properties?maxprice=${valuePerNight}`);
 
-      body.properties.forEach((property) => {
-        expect(property.price_per_night < valuePerNight).toBe(true);
+        body.properties.forEach((property) => {
+          expect(property.price_per_night < valuePerNight).toBe(true);
+        });
+      });
+
+      test('invalid minprice query responds with 400 and msg', async () => {
+        const { body } = await request(app).get('/api/properties?maxprice=invalid_input').expect(400);
+
+        expect(body.msg).toBe('Bad request.');
+      });
+    });
+    describe('MINPRICE QUERY', () => {
+      test('response for the optional query of minprice should be properties with the price per night higher that the value passed', async () => {
+        const valuePerNight = 100;
+
+        const { body } = await request(app).get(`/api/properties?minprice=100`);
+
+        body.properties.forEach((property) => {
+          expect(property.price_per_night > valuePerNight).toBe(true);
+        });
+      });
+      test('invalid minprice query responds with 400 and msg', async () => {
+        const { body } = await request(app).get('/api/properties?minprice=invalid_input').expect(400);
+
+        expect(body.msg).toBe('Bad request.');
+      });
+    });
+    describe('SORT QUERY', () => {
+      test('response for the optional query of sort should be properties organised by the passed key', async () => {
+        const { body } = await request(app).get('/api/properties?sort=cost_per_night');
+
+        expect(body.properties).toBeSortedBy('price_per_night', { descending: true, coerce: true });
+      });
+
+      test('invalid cost_per_night query responds with 400 and msg', async () => {
+        const { body } = await request(app).get('/api/properties?sort=invalid_input').expect(400);
+
+        expect(body.msg).toBe('Invalid sort query.');
+      });
+    });
+    describe('HOST QUERY', () => {
+      test('response for the optional query of host should be properties only with the passed host id', async () => {
+        const { body } = await request(app).get('/api/properties?host=1');
+
+        body.properties.forEach((property) => {
+          expect(property.host).toBe('Alice Johnson');
+        });
+      });
+
+      test('invalid cost_per_night query responds with 400 and msg', async () => {
+        const { body } = await request(app).get('/api/properties?host=invalid_input').expect(400);
+
+        expect(body.msg).toBe('Bad request.');
+      });
+      test('valid ID by non-existent responds with 404 and msg', async () => {
+        const { body } = await request(app).get('/api/properties?host=99').expect(404);
+
+        expect(body.msg).toBe('User not found.');
       });
     });
 
-    test('response for the optional query of minprice should be properties with the price per night higher that the value passed', async () => {
-      const valuePerNight = 100;
+    test('>>>MISSING POPULARITY SORT<<<<', () => {});
 
-      const { body } = await request(app).get(`/api/properties?minprice=${valuePerNight}`);
-
-      body.properties.forEach((property) => {
-        expect(property.price_per_night > valuePerNight).toBe(true);
-      });
-    });
-
-    test('response for the optional query of sort should be properties organised by the passed key', async () => {
-      const { body } = await request(app).get('/api/properties?sort=cost_per_night');
-
-      console.log(body.properties);
-      expect(body.properties).toBeSortedBy('price_per_night', { descending: true, coerce: true });
-    });
+    test('>>>MISSING ORDER QUERY', () => {});
 
     test('>>>UNSURE<<< about sad paths with this endpoint & how to order the test', () => {});
   });
@@ -123,8 +167,8 @@ describe('app', () => {
 
       expect(body.msg).toBe('Bad request.');
     });
-    test('valid property ID by non-existent responds with 404 and msg', async () => {
-      const { body } = await request(app).get('/api/properties/999?user_id=100').expect(404);
+    test('valid property ID and non-existent responds with 404 and msg', async () => {
+      const { body } = await request(app).get('/api/properties/999?user_id=1').expect(404);
 
       expect(body.msg).toBe('Property not found.');
     });
@@ -150,6 +194,8 @@ describe('app', () => {
         expect(review.hasOwnProperty('guest')).toBe(true);
         expect(review.hasOwnProperty('guest_avatar')).toBe(true);
       });
+
+      expect(body.hasOwnProperty('average_rating')).toBe(true);
     });
 
     test('should respond order by the newest reviews to the oldest', async () => {

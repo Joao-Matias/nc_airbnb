@@ -1,9 +1,9 @@
 const { fetchProperties, fetchPropertyById, fetchPropertyReviews } = require('../models/properties.model');
 
 const getProperties = async (req, res, next) => {
-  const { maxprice, minprice, sort } = req.query;
+  const { maxprice, minprice, sort, host } = req.query;
 
-  const properties = await fetchProperties(maxprice, minprice, sort);
+  const properties = await fetchProperties(maxprice, minprice, sort, host);
 
   res.status(200).send({ properties });
 };

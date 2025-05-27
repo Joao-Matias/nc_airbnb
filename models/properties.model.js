@@ -1,25 +1,34 @@
 const db = require('../db/connection');
 
-const fetchProperties = async (maxPrice, minPrice, sortBy) => {
+const fetchProperties = async (maxPrice, minPrice, sortBy, hostId) => {
   const queryValues = [];
   let whereStr = '';
   let sortStr = 'ORDER BY COUNT(favourites.property_id)';
 
   const validSortBy = ['cost_per_night', 'popularity'];
 
-  if (maxPrice || minPrice) {
-    whereStr += ' WHERE properties.price_per_night';
+  if (maxPrice || minPrice || hostId) {
+    whereStr += ' WHERE';
     if (maxPrice) {
       queryValues.push(maxPrice);
-      whereStr += ` < $${queryValues.length}`;
+      whereStr += ` properties.price_per_night < $${queryValues.length}`;
     }
     if (!maxPrice && minPrice) {
       queryValues.push(minPrice);
-      whereStr += ` > $${queryValues.length}`;
+      whereStr += `  properties.price_per_night > $${queryValues.length}`;
     }
     if (maxPrice && minPrice) {
       queryValues.push(minPrice);
       whereStr += ` AND properties.price_per_night > $${queryValues.length}`;
+    }
+  }
+
+  if (hostId) {
+    queryValues.push(hostId);
+    if (maxPrice || minPrice) {
+      whereStr += ` AND users.id=$${queryValues.length}`;
+    } else {
+      whereStr += ` users.user_id=$${queryValues.length}`;
     }
   }
 
@@ -38,19 +47,21 @@ const fetchProperties = async (maxPrice, minPrice, sortBy) => {
 
   const { rows: properties } = await db.query(
     `SELECT 
-    favourites.property_id ,name AS property_name,location,price_per_night, CONCAT(first_name,' ',surname) AS host
+    properties.property_id ,name AS property_name,location,price_per_night, CONCAT(first_name,' ',surname) AS host
     FROM properties
     JOIN users
     ON properties.host_id=users.user_id
-    JOIN favourites 
+    LEFT JOIN favourites 
     ON properties.property_id = favourites.property_id 
     ${whereStr}
-    GROUP BY favourites.property_id,property_name,properties.location,properties.price_per_night,users.first_name,users.surname
+    GROUP BY properties.property_id,property_name,properties.location,properties.price_per_night,users.first_name,users.surname
     ${sortStr} DESC;`,
     queryValues
   );
 
-  console.log(properties);
+  if (properties[0] === undefined) {
+    return Promise.reject({ status: 404, msg: 'User not found.' });
+  }
 
   return properties;
 };
@@ -103,7 +114,7 @@ const fetchPropertyReviews = async (id) => {
     [id]
   );
 
-  if (reviews.length === 0) {
+  if (reviews[0] === undefined) {
     return Promise.reject({ status: 404, msg: 'Property not found.' });
   }
 
