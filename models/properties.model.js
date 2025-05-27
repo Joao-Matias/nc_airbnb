@@ -121,4 +121,18 @@ const fetchPropertyReviews = async (id) => {
   return reviews;
 };
 
-module.exports = { fetchProperties, fetchPropertyById, fetchPropertyReviews };
+const sendPropertyReview = async (propertyId, guestId, rating, comment) => {
+  const {
+    rows: [insertedPropertyReview],
+  } = await db.query(
+    `
+    INSERT INTO reviews(property_id,guest_id,rating,comment)
+    VALUES ($1,$2,$3,$4) RETURNING *;
+    `,
+    [propertyId, guestId, rating, comment]
+  );
+
+  return insertedPropertyReview;
+};
+
+module.exports = { fetchProperties, fetchPropertyById, fetchPropertyReviews, sendPropertyReview };

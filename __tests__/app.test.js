@@ -1,9 +1,23 @@
 const request = require('supertest');
 const app = require('../app');
 const db = require('../db/connection');
+const seed = require('../db/seed');
+const {
+  usersData,
+  propertyTypesData,
+  propertiesData,
+  reviewsData,
+  imagesData,
+  favouritesData,
+  bookingsData,
+} = require('../db/data/test/index');
 
 afterAll(() => {
   db.end();
+});
+
+beforeEach(async () => {
+  await seed(usersData, propertyTypesData, propertiesData, reviewsData, imagesData, favouritesData, bookingsData);
 });
 
 describe('app', () => {
@@ -216,5 +230,36 @@ describe('app', () => {
     });
 
     test('>>>UNSURE<<< how to order the test', () => {});
+  });
+
+  describe('POST /api/properties/:id/reviews', () => {
+    test('responds with an object', async () => {
+      const newReview = {
+        guest_id: 2,
+        rating: 5,
+        comment: 'Perfect stay.',
+      };
+
+      const { body } = await request(app).post('/api/properties/1/reviews').send(newReview).expect(201);
+
+      expect(typeof body).toBe('object');
+    });
+
+    test('responds to the creation of the review with the following properties - review_id,property_id,guest_id,rating_comment,created_at', async () => {
+      const newReview = {
+        guest_id: 2,
+        rating: 5,
+        comment: 'Perfect stay.',
+      };
+
+      const { body } = await request(app).post('/api/properties/1/reviews').send(newReview);
+
+      expect(body.hasOwnProperty('review_id')).toBe(true);
+      expect(body.hasOwnProperty('property_id')).toBe(true);
+      expect(body.hasOwnProperty('guest_id')).toBe(true);
+      expect(body.hasOwnProperty('rating')).toBe(true);
+      expect(body.hasOwnProperty('comment')).toBe(true);
+      expect(body.hasOwnProperty('created_at')).toBe(true);
+    });
   });
 });
