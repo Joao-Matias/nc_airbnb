@@ -111,10 +111,20 @@ describe('app', () => {
       });
     });
     describe('SORT QUERY', () => {
-      test('response for the optional query of sort should be properties organised by the passed key', async () => {
+      test('response for the optional query of sort should be properties organised by cost_per_night', async () => {
         const { body } = await request(app).get('/api/properties?sort=cost_per_night');
 
         expect(body.properties).toBeSortedBy('price_per_night', { descending: true, coerce: true });
+      });
+
+      test('response for the optional query of sort should be properties organised by popularity', async () => {
+        const { body } = await request(app).get('/api/properties?sort=popularity');
+
+        // Manually inputing the values of the most 3 most popular properties
+
+        expect(body.properties[0].property_id).toBe(1);
+        expect(body.properties[1].property_id).toBe(2);
+        expect(body.properties[2].property_id).toBe(7);
       });
 
       test('invalid cost_per_night query responds with 400 and msg', async () => {
@@ -144,14 +154,19 @@ describe('app', () => {
       });
     });
 
-    test('>>>MISSING POPULARITY SORT<<<<', () => {});
+    describe('ORDER QUERY', () => {
+      test('response for the optional query of order should organise properties in ascending order ', async () => {
+        const { body } = await request(app).get('/api/properties?order=ascending');
 
-    test('>>>MISSING ORDER QUERY', () => {});
+        expect(body.properties.slice(-1)[0].property_id).toBe(2);
+        expect(body.properties.slice(-2)[0].property_id).toBe(3);
+      });
+    });
 
     test('>>>UNSURE<<< about sad paths with this endpoint & how to order the test', () => {});
   });
 
-  describe(' GET /api/properties/:id', () => {
+  describe('GET /api/properties/:id', () => {
     test('respond with a status of 200', async () => {
       await request(app).get('/api/properties/1').expect(200);
     });
@@ -260,6 +275,18 @@ describe('app', () => {
       expect(body.hasOwnProperty('rating')).toBe(true);
       expect(body.hasOwnProperty('comment')).toBe(true);
       expect(body.hasOwnProperty('created_at')).toBe(true);
+    });
+
+    test('valid property ID by non-existent responds with 404 and msg', async () => {
+      const newReview = {
+        guest_id: 2,
+        rating: 5,
+        comment: 'Perfect stay.',
+      };
+
+      const { body } = await request(app).post('/api/properties/99/reviews').send(newReview).expect(404);
+
+      expect(body.msg).toBe('Property not found.');
     });
   });
 });

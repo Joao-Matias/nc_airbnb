@@ -1,11 +1,14 @@
 const db = require('../db/connection');
 
-const fetchProperties = async (maxPrice, minPrice, sortBy, hostId) => {
+const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order) => {
   const queryValues = [];
   let whereStr = '';
   let sortStr = 'ORDER BY COUNT(favourites.property_id)';
+  let joinStr = ` LEFT JOIN favourites ON properties.property_id = favourites.property_id `;
+  let orderStr = ' DESC';
 
   const validSortBy = ['cost_per_night', 'popularity'];
+  const validOrderBy = ['ascending', 'descending'];
 
   if (maxPrice || minPrice || hostId) {
     whereStr += ' WHERE';
@@ -40,7 +43,20 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId) => {
       if (sortBy === 'cost_per_night') {
         sortStr += ` price_per_night`;
       } else {
-        sortStr += ` ${sortBy}`;
+        joinStr = ` LEFT JOIN bookings ON properties.property_id = bookings.property_id`;
+        sortStr += ` COUNT(bookings.property_id)`;
+      }
+    }
+  }
+
+  if (order) {
+    if (!validOrderBy.includes(order)) {
+      return Promise.reject({ status: 400, msg: 'Invalid order query.' });
+    } else {
+      if (order === 'ascending') {
+        orderStr = ' ASC';
+      } else {
+        orderStr = ' DESC';
       }
     }
   }
@@ -51,11 +67,10 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId) => {
     FROM properties
     JOIN users
     ON properties.host_id=users.user_id
-    LEFT JOIN favourites 
-    ON properties.property_id = favourites.property_id 
+    ${joinStr}
     ${whereStr}
     GROUP BY properties.property_id,property_name,properties.location,properties.price_per_night,users.first_name,users.surname
-    ${sortStr} DESC;`,
+    ${sortStr} ${orderStr};`,
     queryValues
   );
 
@@ -122,6 +137,14 @@ const fetchPropertyReviews = async (id) => {
 };
 
 const sendPropertyReview = async (propertyId, guestId, rating, comment) => {
+  const { rows: properties } = await db.query(`SELECT property_id FROM properties;`);
+
+  const validPropertiesIds = properties.map((property) => `${property.property_id}`);
+
+  if (!validPropertiesIds.includes(propertyId)) {
+    return Promise.reject({ status: 404, msg: 'Property not found.' });
+  }
+
   const {
     rows: [insertedPropertyReview],
   } = await db.query(

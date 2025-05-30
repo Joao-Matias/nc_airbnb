@@ -6,6 +6,36 @@
     "check_out_date": "2025-12-05"
   },
   {
+    "property_name": "Modern Apartment in City Center",
+    "guest_name": "Bob Smith",
+    "check_in_date": "2025-12-01",
+    "check_out_date": "2025-12-05"
+  },
+  {
+    "property_name": "Modern Apartment in City Center",
+    "guest_name": "Bob Smith",
+    "check_in_date": "2025-12-01",
+    "check_out_date": "2025-12-05"
+  },
+  {
+    "property_name": "Modern Apartment in City Center",
+    "guest_name": "Bob Smith",
+    "check_in_date": "2025-12-01",
+    "check_out_date": "2025-12-05"
+  },
+  {
+    "property_name": "Cosy Family House",
+    "guest_name": "Rachel Cummings",
+    "check_in_date": "2025-12-10",
+    "check_out_date": "2025-12-15"
+  },
+  {
+    "property_name": "Cosy Family House",
+    "guest_name": "Rachel Cummings",
+    "check_in_date": "2025-12-10",
+    "check_out_date": "2025-12-15"
+  },
+  {
     "property_name": "Cosy Family House",
     "guest_name": "Rachel Cummings",
     "check_in_date": "2025-12-10",
@@ -34,6 +64,12 @@
     "guest_name": "Bob Smith",
     "check_in_date": "2025-12-08",
     "check_out_date": "2025-12-12"
+  },
+  {
+    "property_name": "Spacious Countryside House",
+    "guest_name": "Frank White",
+    "check_in_date": "2025-12-18",
+    "check_out_date": "2025-12-22"
   },
   {
     "property_name": "Spacious Countryside House",
