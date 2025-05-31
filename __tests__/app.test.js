@@ -153,7 +153,6 @@ describe('app', () => {
         expect(body.msg).toBe('User not found.');
       });
     });
-
     describe('ORDER QUERY', () => {
       test('response for the optional query of order should organise properties in ascending order ', async () => {
         const { body } = await request(app).get('/api/properties?order=ascending');
@@ -161,9 +160,14 @@ describe('app', () => {
         expect(body.properties.slice(-1)[0].property_id).toBe(2);
         expect(body.properties.slice(-2)[0].property_id).toBe(3);
       });
-    });
 
-    test('>>>UNSURE<<< about sad paths with this endpoint & how to order the test', () => {});
+      test('response for the optional query of order should organise properties in descending order ', async () => {
+        const { body } = await request(app).get('/api/properties?order=descending');
+
+        expect(body.properties[0].property_id).toBe(2);
+        expect(body.properties[1].property_id).toBe(3);
+      });
+    });
   });
 
   describe('GET /api/properties/:id', () => {
@@ -277,6 +281,20 @@ describe('app', () => {
       expect(body.hasOwnProperty('created_at')).toBe(true);
     });
 
+    test('sent body needs to have 3 properties - guest_id,rating,comment', async () => {
+      const newReview = {
+        guest_id: 2,
+        rating: 5,
+        comment: 'Perfect stay.',
+      };
+
+      await request(app).post('/api/properties/99/reviews').send(newReview);
+
+      expect(newReview.hasOwnProperty('guest_id')).toBe(true);
+      expect(newReview.hasOwnProperty('rating')).toBe(true);
+      expect(newReview.hasOwnProperty('comment')).toBe(true);
+    });
+
     test('valid property ID by non-existent responds with 404 and msg', async () => {
       const newReview = {
         guest_id: 2,
@@ -287,6 +305,63 @@ describe('app', () => {
       const { body } = await request(app).post('/api/properties/99/reviews').send(newReview).expect(404);
 
       expect(body.msg).toBe('Property not found.');
+    });
+
+    test('invalid rating passed on body responds with 404 and msg', async () => {
+      const newReview = {
+        guest_id: 2,
+        rating: 'INVALID',
+        comment: 'Perfect stay.',
+      };
+
+      const { body } = await request(app).post('/api/properties/1/reviews').send(newReview).expect(400);
+
+      expect(body.msg).toBe('Invalid payload setup.');
+    });
+
+    test('invalid guest id passed on body responds with 404 and msg', async () => {
+      const newReview = {
+        guest_id: 'INVALID',
+        rating: 2,
+        comment: 'Perfect stay.',
+      };
+
+      const { body } = await request(app).post('/api/properties/1/reviews').send(newReview).expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+
+    test('valid guest id but non existent passed on body responds with 400 and msg', async () => {
+      const newReview = {
+        guest_id: 99,
+        rating: 2,
+        comment: 'Perfect stay.',
+      };
+
+      const { body } = await request(app).post('/api/properties/1/reviews').send(newReview).expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+
+    test('Missing properties from the body responds with 400', async () => {
+      const newReview = {
+        rating: 2,
+      };
+
+      const { body } = await request(app).post('/api/properties/1/reviews').send(newReview).expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+    test('Missing properties from the body responds with 400', async () => {
+      const newReview = {
+        guest_id: 1,
+        rating: 2,
+        banana: 'INVALID PROPERTY',
+      };
+
+      const { body } = await request(app).post('/api/properties/1/reviews').send(newReview).expect(400);
+
+      expect(body.msg).toBe('Bad request.');
     });
   });
 });

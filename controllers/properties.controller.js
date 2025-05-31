@@ -16,35 +16,36 @@ const getProperties = async (req, res, next) => {
 const getPropertyById = async (req, res, next) => {
   const { id } = req.params;
   const { user_id } = req.query;
-  try {
-    const property = await fetchPropertyById(id, user_id);
-    res.status(200).send({ property });
-  } catch (error) {
-    next(error);
-  }
+
+  const property = await fetchPropertyById(id, user_id);
+  res.status(200).send({ property });
 };
 
 const getPropertyReviews = async (req, res, next) => {
   const { id } = req.params;
 
-  try {
-    const reviews = await fetchPropertyReviews(id);
+  const reviews = await fetchPropertyReviews(id);
 
-    let reviewRatingsSum = 0;
+  let reviewRatingsSum = 0;
 
-    reviews.forEach((review) => {
-      reviewRatingsSum += review.rating;
-    });
+  reviews.forEach((review) => {
+    reviewRatingsSum += review.rating;
+  });
 
-    const average_rating = reviewRatingsSum / reviews.length;
+  const average_rating = reviewRatingsSum / reviews.length;
 
-    res.status(200).send({ reviews, average_rating });
-  } catch (error) {
-    next(error);
-  }
+  res.status(200).send({ reviews, average_rating });
 };
 
 const postPropertyReview = async (req, res, next) => {
+  const validReqProperties = ['guest_id', 'rating', 'comment'];
+
+  for (const key in req.body) {
+    if (!validReqProperties.includes(key)) {
+      return Promise.reject();
+    }
+  }
+
   const { guest_id, rating, comment } = req.body;
   const { id } = req.params;
 

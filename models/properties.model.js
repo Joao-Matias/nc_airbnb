@@ -139,10 +139,14 @@ const fetchPropertyReviews = async (id) => {
 const sendPropertyReview = async (propertyId, guestId, rating, comment) => {
   const { rows: properties } = await db.query(`SELECT property_id FROM properties;`);
 
+  const validRating = [1, 2, 3, 4, 5];
   const validPropertiesIds = properties.map((property) => `${property.property_id}`);
 
   if (!validPropertiesIds.includes(propertyId)) {
     return Promise.reject({ status: 404, msg: 'Property not found.' });
+  }
+  if (!validRating.includes(rating)) {
+    return Promise.reject({ status: 400, msg: 'Invalid payload setup.' });
   }
 
   const {
