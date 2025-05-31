@@ -77,6 +77,16 @@ describe('app', () => {
       });
     });
 
+    // test('responds with an additional properties field - image', async () => {
+    //   const { body } = await request(app).get('/api/properties').expect(200);
+
+    //   expect(body.properties.length > 0).toBe(true);
+
+    //   body.properties.forEach((property) => {
+    //     expect(property.hasOwnProperty('image')).toBe(true);
+    //   });
+    // });
+
     describe('MAXPRICE QUERY', () => {
       test('response for the optional query of maxprice should be properties with the price per night lower that the value passed', async () => {
         const valuePerNight = 100;
@@ -481,6 +491,70 @@ describe('app', () => {
       const { body } = await request(app).delete('/api/reviews/99').expect(404);
 
       expect(body.msg).toBe('Review not found.');
+    });
+  });
+
+  describe('POST /api/properties/:id/favourite', () => {
+    test('responds with an object and a 201 code', async () => {
+      const user = {
+        guest_id: 2,
+      };
+
+      const { body } = await request(app).post('/api/properties/1/favourite').send(user).expect(201);
+
+      expect(typeof body).toEqual('object');
+    });
+
+    test('responds with the following properties - msg,favourite_id', async () => {
+      const user = {
+        guest_id: 2,
+      };
+
+      const { body } = await request(app).post('/api/properties/1/favourite').send(user).expect(201);
+
+      expect(body.hasOwnProperty('msg')).toBe(true);
+      expect(body.hasOwnProperty('favourite_id')).toBe(true);
+    });
+
+    test('invalid property id', async () => {
+      const user = {
+        guest_id: 2,
+      };
+
+      const { body } = await request(app).post('/api/properties/INVALID/favourite').send(user).expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+
+    test('valid property id but non existent', async () => {
+      const user = {
+        guest_id: 2,
+      };
+      const { body } = await request(app).post('/api/properties/99/favourite').send(user).expect(404);
+
+      expect(body.msg).toBe('Id passed not found.');
+    });
+    test('invalid payload value 400', async () => {
+      const user = {
+        guest_id: 'INVALID',
+      };
+      const { body } = await request(app).post('/api/properties/1/favourite').send(user).expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+    test('valid guest id payload but non existent responds 404', async () => {
+      const user = {
+        guest_id: 99,
+      };
+      const { body } = await request(app).post('/api/properties/1/favourite').send(user).expect(404);
+
+      expect(body.msg).toBe('Id passed not found.');
+    });
+    test('missing payload responds 400', async () => {
+      const user = {};
+      const { body } = await request(app).post('/api/properties/1/favourite').send(user).expect(400);
+
+      expect(body.msg).toBe('Missing guest_id.');
     });
   });
 });

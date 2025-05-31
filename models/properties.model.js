@@ -4,7 +4,7 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order) => {
   const queryValues = [];
   let whereStr = '';
   let sortStr = 'ORDER BY COUNT(favourites.property_id)';
-  let joinStr = ` LEFT JOIN favourites ON properties.property_id = favourites.property_id `;
+  let joinStr = ` LEFT JOIN favourites ON properties.property_id = favourites.property_id  `;
   let orderStr = ' DESC';
 
   const validSortBy = ['cost_per_night', 'popularity'];
@@ -43,7 +43,7 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order) => {
       if (sortBy === 'cost_per_night') {
         sortStr += ` price_per_night`;
       } else {
-        joinStr = ` LEFT JOIN bookings ON properties.property_id = bookings.property_id`;
+        joinStr = ` LEFT JOIN bookings ON properties.property_id = bookings.property_id `;
         sortStr += ` COUNT(bookings.property_id)`;
       }
     }
@@ -60,6 +60,14 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order) => {
       }
     }
   }
+
+  // LEFT JOIN images ON properties.property_id = images.property_id
+
+  // LEFT JOIN images ON properties.property_id = images.property_id
+
+  // properties.property_id ,name AS property_name,location,price_per_night, CONCAT(first_name,' ',surname) AS host, FIRST_VALUE(images.image_url) OVER(PARTITION BY properties.property_id) AS image
+
+  // GROUP BY properties.property_id,property_name,properties.location,properties.price_per_night,users.first_name,users.surname,images.image_url
 
   const { rows: properties } = await db.query(
     `SELECT 
@@ -162,4 +170,46 @@ const sendPropertyReview = async (propertyId, guestId, rating, comment) => {
   return insertedPropertyReview;
 };
 
-module.exports = { fetchProperties, fetchPropertyById, fetchPropertyReviews, sendPropertyReview };
+const sendPropertyFavourited = async (propertyId, guestId) => {
+  try {
+    if (guestId === undefined) {
+      return Promise.reject({ status: 400, msg: 'Missing guest_id.' });
+    }
+
+    const {
+      rows: [propertyFavourited],
+    } = await db.query(
+      `
+      INSERT INTO favourites (guest_id,property_id)
+      VALUES($1,$2) RETURNING *;
+  
+      `,
+      [guestId, propertyId]
+    );
+
+    return { msg: 'Property favourited successfully.', favourite_id: propertyFavourited.favourite_id };
+  } catch (error) {
+    if (error.code === '22P02') {
+      return Promise.reject();
+    }
+    if (error.code === '23503') {
+      return Promise.reject({ status: 404, msg: 'Id passed not found.' });
+    }
+  }
+};
+
+const eraseFavourited = async (id) => {
+  const { rows: favourite } = await db.query(`
+    DELETE FROM favourites
+    WHERE 
+    `);
+};
+
+module.exports = {
+  fetchProperties,
+  fetchPropertyById,
+  fetchPropertyReviews,
+  sendPropertyReview,
+  sendPropertyFavourited,
+  eraseFavourited,
+};

@@ -7,6 +7,8 @@ const {
   getPropertyById,
   getPropertyReviews,
   postPropertyReview,
+  postPropertyFavourited,
+  deletePropertyFavourited,
 } = require('./controllers/properties.controller');
 const { deleteReviewById } = require('./controllers/reviews.controller');
 
@@ -18,6 +20,8 @@ app.get('/api/properties', getProperties);
 app.get('/api/properties/:id', getPropertyById);
 app.get('/api/properties/:id/reviews', getPropertyReviews);
 app.post('/api/properties/:id/reviews', postPropertyReview);
+app.post('/api/properties/:id/favourite', postPropertyFavourited);
+app.delete('/api/properties/:id/favourite', deletePropertyFavourited);
 
 app.get('/api/users/:id', getUserById);
 app.patch('/api/users/:id', patchUserById);
