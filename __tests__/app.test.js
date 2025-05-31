@@ -364,4 +364,103 @@ describe('app', () => {
       expect(body.msg).toBe('Bad request.');
     });
   });
+
+  describe('PATCH /api/users/:id', () => {
+    test('responds with an object', async () => {
+      const updatedUser = {
+        first_name: 'Joseph',
+        surname: 'Putts',
+        email: 'josputts@gmail.com',
+        phone: '07887554345',
+        avatar: 'https://example.com/images/alice.jpg',
+      };
+      const { body } = await request(app).patch('/api/users/1').send(updatedUser).expect(200);
+
+      expect(typeof body).toBe('object');
+    });
+
+    test('responds to the updated user with the any combination of the following properties - first_name,surname,email,phone,avatar', async () => {
+      const updatedUser = {
+        first_name: 'Joseph',
+        surname: 'Putts',
+        email: 'josputts@gmail.com',
+        phone: '07887554345',
+        avatar: 'https://example.com/images/alice.jpg',
+      };
+      const { body } = await request(app).patch('/api/users/1').send(updatedUser).expect(200);
+
+      expect(body.user.hasOwnProperty('first_name')).toBe(true);
+      expect(body.user.hasOwnProperty('user_id')).toBe(true);
+      expect(body.user.hasOwnProperty('surname')).toBe(true);
+      expect(body.user.hasOwnProperty('email')).toBe(true);
+      expect(body.user.hasOwnProperty('phone_number')).toBe(true);
+      expect(body.user.hasOwnProperty('avatar')).toBe(true);
+      expect(body.user.hasOwnProperty('is_host')).toBe(true);
+      expect(body.user.hasOwnProperty('created_at')).toBe(true);
+    });
+
+    test('should only update the passed properties with the values passed', async () => {
+      const updatedUser = {
+        email: 'josputts@gmail.com',
+        phone: '07887554345',
+        avatar: 'https://example.com/images/alice.jpg',
+      };
+      const { body } = await request(app).patch('/api/users/1').send(updatedUser).expect(200);
+
+      expect(body.user.first_name).toBe('Alice');
+      expect(body.user.surname).toBe('Johnson');
+      expect(body.user.email).toBe('josputts@gmail.com');
+      expect(body.user.phone_number).toBe('07887554345');
+      expect(body.user.avatar).toBe('https://example.com/images/alice.jpg');
+    });
+
+    test('valid user ID by non-existent responds with 404 and msg', async () => {
+      const updatedUser = {
+        email: 'josputts@gmail.com',
+        phone: '07887554345',
+        avatar: 'https://example.com/images/alice.jpg',
+      };
+
+      const { body } = await request(app).patch('/api/users/99').send(updatedUser).expect(404);
+
+      expect(body.msg).toBe('User not found.');
+    });
+
+    test('invalid path responds with 400 and msg', async () => {
+      const updatedUser = {
+        email: 'josputts@gmail.com',
+        phone: '07887554345',
+        avatar: 'https://example.com/images/alice.jpg',
+      };
+
+      const { body } = await request(app).patch('/api/users/INVALID').send(updatedUser).expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+
+    test('invalid properties are passed responds with 400 ', async () => {
+      const updatedUser = {
+        banana: 'Joe',
+        email: 'josputts@gmail.com',
+        phone: '07817554345',
+        avatar: 'https://example.com/images/alice.jpg',
+      };
+
+      const { body } = await request(app).patch('/api/users/1').send(updatedUser).expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+
+    test('invalid value for phone number responds with 400 ', async () => {
+      const updatedUser = {
+        email: 'josputts@gmail.com',
+        phone: '0787553451',
+        avatar: 'https://example.com/images/alice.jpg',
+      };
+
+      const { body } = await request(app).patch('/api/users/1').send(updatedUser).expect(400);
+
+      expect(body.msg).toBe('Invalid phone number.');
+    });
+  });
 });
