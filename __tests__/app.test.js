@@ -463,4 +463,24 @@ describe('app', () => {
       expect(body.msg).toBe('Invalid phone number.');
     });
   });
+
+  describe('DELETE /api/reviews/:id', () => {
+    test('responds with no body and 204 and a empty object', async () => {
+      const { body } = await request(app).delete('/api/reviews/1').expect(204);
+
+      expect(body).toEqual({});
+    });
+
+    test('invalid review id', async () => {
+      const { body } = await request(app).delete('/api/reviews/INVALID').expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+
+    test('valid review id but non existent', async () => {
+      const { body } = await request(app).delete('/api/reviews/99').expect(404);
+
+      expect(body.msg).toBe('Review not found.');
+    });
+  });
 });

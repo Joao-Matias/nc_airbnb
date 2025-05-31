@@ -8,6 +8,7 @@ const {
   getPropertyReviews,
   postPropertyReview,
 } = require('./controllers/properties.controller');
+const { deleteReviewById } = require('./controllers/reviews.controller');
 
 const app = express();
 
@@ -16,12 +17,12 @@ app.use(express.json());
 app.get('/api/properties', getProperties);
 app.get('/api/properties/:id', getPropertyById);
 app.get('/api/properties/:id/reviews', getPropertyReviews);
-
 app.post('/api/properties/:id/reviews', postPropertyReview);
 
 app.get('/api/users/:id', getUserById);
-
 app.patch('/api/users/:id', patchUserById);
+
+app.delete('/api/reviews/:id', deleteReviewById);
 
 app.all('/*invalid_path', handlePathNotFound);
 

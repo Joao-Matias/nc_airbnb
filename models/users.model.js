@@ -45,4 +45,5 @@ const updateUserById = async (id, firstName, surname, email, phone, avatar) => {
 
   return user;
 };
+
 module.exports = { fetchUserById, updateUserById };
