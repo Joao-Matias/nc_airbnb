@@ -1,6 +1,6 @@
 const db = require('../db/connection');
 
-const { filterUserSetStr, isMobileNumber } = require('../helper_functions/user_helper');
+const { filterUserSetStr, isMobileNumber } = require('../helper_functions/user-helper');
 
 const fetchUserById = async (id) => {
   const {

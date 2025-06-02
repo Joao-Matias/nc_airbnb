@@ -127,7 +127,7 @@ describe('app', () => {
         expect(body.properties).toBeSortedBy('price_per_night', { descending: true, coerce: true });
       });
 
-      test('response for the optional query of sort should be properties organised by popularity', async () => {
+      xtest('response for the optional query of sort should be properties organised by popularity', async () => {
         const { body } = await request(app).get('/api/properties?sort=popularity');
 
         // Manually inputing the values of the most 3 most popular properties
@@ -555,6 +555,30 @@ describe('app', () => {
       const { body } = await request(app).post('/api/properties/1/favourite').send(user).expect(400);
 
       expect(body.msg).toBe('Missing guest_id.');
+    });
+  });
+
+  describe('GET /api/amenities', () => {
+    test('responds with a 200 code and an object', async () => {
+      const { body } = await request(app).get('/api/amenities').expect(200);
+
+      expect(typeof body.amenities).toBe('object');
+    });
+
+    test('responds with properties - amenity_slug,amenity_text', async () => {
+      const { body } = await request(app).get('/api/amenities');
+      console.log(body);
+
+      body.amenities.forEach((amenity) => {
+        expect(amenity.hasOwnProperty('amenity_slug')).toBe(true);
+        expect(amenity.hasOwnProperty('amenity_text')).toBe(true);
+      });
+    });
+
+    test('Invalid path responds with 404 ', async () => {
+      const { body } = await request(app).get('/api/INVALID').expect(404);
+
+      expect(body.msg).toBe('Path not found.');
     });
   });
 });

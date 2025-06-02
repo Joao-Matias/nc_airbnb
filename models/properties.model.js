@@ -4,7 +4,7 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order) => {
   const queryValues = [];
   let whereStr = '';
   let sortStr = 'ORDER BY COUNT(favourites.property_id)';
-  let joinStr = ` LEFT JOIN favourites ON properties.property_id = favourites.property_id  `;
+  let joinStr = ` LEFT JOIN favourites ON properties.property_id = favourites.property_id LEFT JOIN images ON properties.property_id = images.property_id`;
   let orderStr = ' DESC';
 
   const validSortBy = ['cost_per_night', 'popularity'];
@@ -43,7 +43,7 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order) => {
       if (sortBy === 'cost_per_night') {
         sortStr += ` price_per_night`;
       } else {
-        joinStr = ` LEFT JOIN bookings ON properties.property_id = bookings.property_id `;
+        joinStr = ` LEFT JOIN bookings ON properties.property_id = bookings.property_id LEFT JOIN images ON properties.property_id = images.property_id `;
         sortStr += ` COUNT(bookings.property_id)`;
       }
     }
@@ -71,13 +71,13 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order) => {
 
   const { rows: properties } = await db.query(
     `SELECT 
-    properties.property_id ,name AS property_name,location,price_per_night, CONCAT(first_name,' ',surname) AS host
+    properties.property_id ,name AS property_name,location,price_per_night, CONCAT(first_name,' ',surname) AS host,image_url AS image
     FROM properties
     JOIN users
     ON properties.host_id=users.user_id
     ${joinStr}
     ${whereStr}
-    GROUP BY properties.property_id,property_name,properties.location,properties.price_per_night,users.first_name,users.surname
+    GROUP BY properties.property_id,property_name,properties.location,properties.price_per_night,users.first_name,users.surname,images.image_url
     ${sortStr} ${orderStr};`,
     queryValues
   );

@@ -11,6 +11,7 @@ const {
   deletePropertyFavourited,
 } = require('./controllers/properties.controller');
 const { deleteReviewById } = require('./controllers/reviews.controller');
+const { getAmenities } = require('./controllers/amenities.controller');
 
 const app = express();
 
@@ -25,6 +26,8 @@ app.delete('/api/properties/:id/favourite', deletePropertyFavourited);
 
 app.get('/api/users/:id', getUserById);
 app.patch('/api/users/:id', patchUserById);
+
+app.get('/api/amenities', getAmenities);
 
 app.delete('/api/reviews/:id', deleteReviewById);
 
