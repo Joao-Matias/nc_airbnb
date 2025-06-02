@@ -567,7 +567,6 @@ describe('app', () => {
 
     test('responds with properties - amenity_slug,amenity_text', async () => {
       const { body } = await request(app).get('/api/amenities');
-      console.log(body);
 
       body.amenities.forEach((amenity) => {
         expect(amenity.hasOwnProperty('amenity_slug')).toBe(true);
@@ -579,6 +578,56 @@ describe('app', () => {
       const { body } = await request(app).get('/api/INVALID').expect(404);
 
       expect(body.msg).toBe('Path not found.');
+    });
+  });
+
+  describe('GET /api/properties/:id/bookings', () => {
+    test('responds with a 200 code and an array', async () => {
+      const { body } = await request(app).get('/api/properties/1/bookings').expect(200);
+
+      expect(Array.isArray(body.bookings)).toBe(true);
+    });
+
+    test('responds with properties for the bookings - booking_id,check_in_data,check_out_date,created_at', async () => {
+      const { body } = await request(app).get('/api/properties/1/bookings');
+
+      expect(body.bookings.length > 0).toBe(true);
+
+      body.bookings.forEach((booking) => {
+        expect(booking.hasOwnProperty('booking_id')).toBe(true);
+        expect(booking.hasOwnProperty('check_in_date')).toBe(true);
+        expect(booking.hasOwnProperty('check_out_date')).toBe(true);
+        expect(booking.hasOwnProperty('created_at')).toBe(true);
+      });
+
+      expect(body.hasOwnProperty('property_id')).toBe(true);
+    });
+
+    test('responds with the results organized by latest to earliest checkout date', async () => {
+      const { body } = await request(app).get('/api/properties/1/bookings');
+
+      // Manually select the order to test
+
+      expect(body.bookings[0].booking_id).toBe(3);
+      expect(body.bookings[1].booking_id).toBe(2);
+      expect(body.bookings[2].booking_id).toBe(4);
+      expect(body.bookings[3].booking_id).toBe(1);
+    });
+
+    test('Invalid path responds with 404 ', async () => {
+      const { body } = await request(app).get('/api/properties/1/INVALID').expect(404);
+
+      expect(body.msg).toBe('Path not found.');
+    });
+    test('invalid property id', async () => {
+      const { body } = await request(app).get('/api/properties/INVALID/bookings').expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+    test('valid property id but non existent', async () => {
+      const { body } = await request(app).get('/api/properties/99/bookings').expect(404);
+
+      expect(body.msg).toBe('Property not found.');
     });
   });
 });

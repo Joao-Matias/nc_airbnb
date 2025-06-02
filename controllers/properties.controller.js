@@ -5,6 +5,7 @@ const {
   sendPropertyReview,
   sendPropertyFavourited,
   eraseFavourited,
+  fetchPropertyBookings,
 } = require('../models/properties.model');
 
 const getProperties = async (req, res, next) => {
@@ -73,6 +74,14 @@ const deletePropertyFavourited = async (req, res, next) => {
   res.status(204).send();
 };
 
+const getPropertyBookings = async (req, res, next) => {
+  const { id } = req.params;
+
+  const bookings = await fetchPropertyBookings(id);
+
+  res.status(200).send(bookings);
+};
+
 module.exports = {
   getProperties,
   getPropertyById,
@@ -80,4 +89,5 @@ module.exports = {
   postPropertyReview,
   postPropertyFavourited,
   deletePropertyFavourited,
+  getPropertyBookings,
 };

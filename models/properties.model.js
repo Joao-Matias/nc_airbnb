@@ -205,6 +205,24 @@ const eraseFavourited = async (id) => {
     `);
 };
 
+const fetchPropertyBookings = async (id) => {
+  const { rows: bookings } = await db.query(
+    `
+   SELECT booking_id,check_in_date,check_out_date,created_at
+   FROM bookings
+   WHERE property_id = $1
+   ORDER BY check_out_date DESC;
+    `,
+    [id]
+  );
+
+  if (bookings.length === 0) {
+    return Promise.reject({ status: 404, msg: 'Property not found.' });
+  }
+
+  return { bookings, property_id: id };
+};
+
 module.exports = {
   fetchProperties,
   fetchPropertyById,
@@ -212,4 +230,5 @@ module.exports = {
   sendPropertyReview,
   sendPropertyFavourited,
   eraseFavourited,
+  fetchPropertyBookings,
 };

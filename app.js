@@ -9,6 +9,7 @@ const {
   postPropertyReview,
   postPropertyFavourited,
   deletePropertyFavourited,
+  getPropertyBookings,
 } = require('./controllers/properties.controller');
 const { deleteReviewById } = require('./controllers/reviews.controller');
 const { getAmenities } = require('./controllers/amenities.controller');
@@ -23,6 +24,7 @@ app.get('/api/properties/:id/reviews', getPropertyReviews);
 app.post('/api/properties/:id/reviews', postPropertyReview);
 app.post('/api/properties/:id/favourite', postPropertyFavourited);
 app.delete('/api/properties/:id/favourite', deletePropertyFavourited);
+app.get('/api/properties/:id/bookings', getPropertyBookings);
 
 app.get('/api/users/:id', getUserById);
 app.patch('/api/users/:id', patchUserById);
