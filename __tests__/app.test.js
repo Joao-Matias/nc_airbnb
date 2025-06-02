@@ -558,6 +558,53 @@ describe('app', () => {
     });
   });
 
+  describe('DELETE /api/properties/:id/users/:user_id/favourite', () => {
+    test('responds with 204 code', async () => {
+      await request(app).delete('/api/properties/1/users/2/favourite').expect(204);
+    });
+
+    test('responds without the value passed in the data base', async () => {
+      await request(app).delete('/api/properties/2/users/6/favourite').expect(204);
+
+      const { rows: favourites } = await db.query(`SELECT * FROM favourites;`);
+
+      favourites.forEach((favourite) => {
+        expect(favourite.guest_id).not.toBe('6');
+        expect(favourite.property_id).not.toBe('2');
+      });
+    });
+
+    test('Invalid path responds with 404 ', async () => {
+      const { body } = await request(app).delete('/api/properties/1/INVALID').expect(404);
+
+      expect(body.msg).toBe('Path not found.');
+    });
+
+    test('invalid property id', async () => {
+      const { body } = await request(app).delete('/api/properties/INVALID/users/1/favourite').expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+
+    test('valid property id but non existent', async () => {
+      const { body } = await request(app).delete('/api/properties/99/users/1/favourite').expect(404);
+
+      expect(body.msg).toBe('Passed id not found.');
+    });
+
+    test('invalid user id but non existent', async () => {
+      const { body } = await request(app).delete('/api/properties/1/users/INVALID/favourite').expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+
+    test('valid user id but non existent', async () => {
+      const { body } = await request(app).delete('/api/properties/1/users/99/favourite').expect(404);
+
+      expect(body.msg).toBe('Passed id not found.');
+    });
+  });
+
   describe('GET /api/amenities', () => {
     test('responds with a 200 code and an object', async () => {
       const { body } = await request(app).get('/api/amenities').expect(200);

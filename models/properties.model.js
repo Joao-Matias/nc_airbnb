@@ -1,4 +1,5 @@
 const db = require('../db/connection');
+const { usersGreenList, propertiesGreenList } = require('../helper_functions/properties-helper');
 
 const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order) => {
   const queryValues = [];
@@ -198,11 +199,19 @@ const sendPropertyFavourited = async (propertyId, guestId) => {
   }
 };
 
-const eraseFavourited = async (id) => {
-  const { rows: favourite } = await db.query(`
+const eraseFavourited = async (propertyId, userId) => {
+  const { rows: favourite } = await db.query(
+    `
     DELETE FROM favourites
-    WHERE 
-    `);
+    WHERE property_id = $1 AND guest_id = $2
+    RETURNING *;
+    `,
+    [propertyId, userId]
+  );
+
+  if (favourite.length === 0) {
+    return Promise.reject({ status: 404, msg: 'Passed id not found.' });
+  }
 };
 
 const fetchPropertyBookings = async (id) => {

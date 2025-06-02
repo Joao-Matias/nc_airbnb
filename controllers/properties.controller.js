@@ -66,10 +66,10 @@ const postPropertyFavourited = async (req, res, next) => {
   res.status(201).send(property);
 };
 
-const deletePropertyFavourited = async (req, res, next) => {
-  const { id } = req.params;
+const deletePropertyUsersFavourited = async (req, res, next) => {
+  const { id, user_id } = req.params;
 
-  await eraseFavourited(id);
+  await eraseFavourited(id, user_id);
 
   res.status(204).send();
 };
@@ -88,6 +88,6 @@ module.exports = {
   getPropertyReviews,
   postPropertyReview,
   postPropertyFavourited,
-  deletePropertyFavourited,
+  deletePropertyUsersFavourited,
   getPropertyBookings,
 };
