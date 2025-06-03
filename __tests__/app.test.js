@@ -78,15 +78,15 @@ describe('app', () => {
       });
     });
 
-    // test('responds with an additional properties field - image', async () => {
-    //   const { body } = await request(app).get('/api/properties').expect(200);
+    test('responds with an additional properties field - image', async () => {
+      const { body } = await request(app).get('/api/properties').expect(200);
 
-    //   expect(body.properties.length > 0).toBe(true);
+      expect(body.properties.length > 0).toBe(true);
 
-    //   body.properties.forEach((property) => {
-    //     expect(property.hasOwnProperty('image')).toBe(true);
-    //   });
-    // });
+      body.properties.forEach((property) => {
+        expect(property.hasOwnProperty('image')).toBe(true);
+      });
+    });
 
     describe('MAXPRICE QUERY', () => {
       test('response for the optional query of maxprice should be properties with the price per night lower that the value passed', async () => {
@@ -204,6 +204,15 @@ describe('app', () => {
 
       expect(body.property.hasOwnProperty('favourited')).toBe(true);
       expect(body.property.favourited).toBe(false);
+    });
+
+    test.only('should respond with an aditional field - images - and should be an array', async () => {
+      const { body } = await request(app).get('/api/properties/1');
+
+      console.log(body);
+
+      expect(body.property.hasOwnProperty('images')).toBe(true);
+      expect(Array.isArray(body.property.images)).toBe(true);
     });
 
     test('invalid property Id responds with 400 and msg', async () => {
@@ -691,7 +700,7 @@ describe('app', () => {
 
       expect(typeof body).toBe('object');
     });
-    test.only('responds with properties - msg, booking_id', async () => {
+    test('responds with properties - msg, booking_id', async () => {
       const payload = {
         guest_id: 1,
         check_in_date: '01/07/2025',
