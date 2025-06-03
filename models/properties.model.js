@@ -1,6 +1,6 @@
 const db = require('../db/connection');
 
-const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order) => {
+const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order, amenity) => {
   const queryValues = [];
   let whereStr = '';
   let sortStr = 'ORDER BY COUNT(favourites.property_id)';
@@ -10,7 +10,7 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order) => {
   const validSortBy = ['cost_per_night', 'popularity'];
   const validOrderBy = ['ascending', 'descending'];
 
-  if (maxPrice || minPrice || hostId) {
+  if (maxPrice || minPrice || hostId || amenity) {
     whereStr += ' WHERE';
     if (maxPrice) {
       queryValues.push(maxPrice);
@@ -32,6 +32,17 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order) => {
       whereStr += ` AND users.id=$${queryValues.length}`;
     } else {
       whereStr += ` users.user_id=$${queryValues.length}`;
+    }
+  }
+
+  if (amenity) {
+    for (let i = 0; i < amenity.length; i++) {
+      queryValues.push(amenity[i]);
+      if (maxPrice || minPrice || hostId || i > 0) {
+        whereStr += ` AND amenity=$${queryValues.length}`;
+      } else {
+        whereStr += ` amenity=$${queryValues.length}`;
+      }
     }
   }
 
@@ -67,14 +78,23 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order) => {
     FROM properties
     JOIN users
     ON properties.host_id=users.user_id
+    JOIN properties_amenities
+    ON properties.property_id = properties_amenities.property_id
+    JOIN amenities
+    ON properties_amenities.amenity_slug = amenities.amenity
     LEFT JOIN favourites 
     ON properties.property_id = favourites.property_id 
     LEFT JOIN (
     SELECT DISTINCT ON (property_id) * FROM images) images
     ON properties.property_id = images.property_id
+    WHERE amenity = 'Washer'
     GROUP BY properties.property_id,property_name,properties.location,properties.price_per_night,users.first_name,users.surname,images.image_url
     ORDER BY COUNT(properties.property_id) DESC;
     `;
+
+  console.log(joinStr);
+  console.log(whereStr);
+  console.log(queryValues);
 
   const { rows: properties } = await db.query(
     `SELECT 
@@ -82,6 +102,10 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order) => {
     FROM properties
     JOIN users
     ON properties.host_id=users.user_id
+    JOIN properties_amenities
+    ON properties.property_id = properties_amenities.property_id
+    JOIN amenities
+    ON properties_amenities.amenity_slug = amenities.amenity
     ${joinStr}
     ${whereStr}
     GROUP BY properties.property_id,property_name,properties.location,properties.price_per_night,users.first_name,users.surname,images.image_url

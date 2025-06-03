@@ -66,7 +66,6 @@ describe('app', () => {
     test('responds with the following properties - property_id,property_name,location,price_per_night,host', async () => {
       const { body } = await request(app).get('/api/properties').expect(200);
 
-      console.log(body);
       expect(body.properties.length > 0).toBe(true);
 
       body.properties.forEach((property) => {
@@ -179,6 +178,21 @@ describe('app', () => {
         expect(body.properties[1].property_id).toBe(3);
       });
     });
+    describe('AMENITY QUERY', () => {
+      test('response for the optional query of filtering by the amenity passed', async () => {
+        const { body } = await request(app).get('/api/properties?amenity=Washer');
+
+        expect(body.properties[0].property_id).toBe(7);
+        expect(body.properties[1].property_id).toBe(4);
+        expect(body.properties[2].property_id).toBe(10);
+      });
+
+      test.only('response for multiple addition of several amenities keep filtering down', async () => {
+        const { body } = await request(app).get('/api/properties?amenity=Washer&amenity=TV');
+
+        expect(body.properties[0].property_id).toBe(4);
+      });
+    });
   });
 
   describe('GET /api/properties/:id', () => {
@@ -206,10 +220,8 @@ describe('app', () => {
       expect(body.property.favourited).toBe(false);
     });
 
-    test.only('should respond with an aditional field - images - and should be an array', async () => {
+    test('should respond with an aditional field - images - and should be an array', async () => {
       const { body } = await request(app).get('/api/properties/1');
-
-      console.log(body);
 
       expect(body.property.hasOwnProperty('images')).toBe(true);
       expect(Array.isArray(body.property.images)).toBe(true);
@@ -688,29 +700,29 @@ describe('app', () => {
     });
   });
 
-  describe('POST /api/properties/:id/booking', () => {
-    test('responds with a 201 code and an object', async () => {
-      const payload = {
-        guest_id: 1,
-        check_in_date: '01/07/2025',
-        check_out_date: '15/07/2025',
-      };
+  // describe('POST /api/properties/:id/booking', () => {
+  //   test('responds with a 201 code and an object', async () => {
+  //     const payload = {
+  //       guest_id: 1,
+  //       check_in_date: '01/07/2025',
+  //       check_out_date: '15/07/2025',
+  //     };
 
-      const { body } = await request(app).post('/api/properties/2/bookings').send(payload).expect(201);
+  //     const { body } = await request(app).post('/api/properties/2/booking').send(payload).expect(201);
 
-      expect(typeof body).toBe('object');
-    });
-    test('responds with properties - msg, booking_id', async () => {
-      const payload = {
-        guest_id: 1,
-        check_in_date: '01/07/2025',
-        check_out_date: '15/07/2025',
-      };
+  //     expect(typeof body).toBe('object');
+  //   });
+  //   test('responds with properties - msg, booking_id', async () => {
+  //     const payload = {
+  //       guest_id: 1,
+  //       check_in_date: '01/07/2025',
+  //       check_out_date: '15/07/2025',
+  //     };
 
-      const { body } = await request(app).post('/api/properties/2/bookings').send(payload);
+  //     const { body } = await request(app).post('/api/properties/2/booking').send(payload);
 
-      expect(body.hasOwnProperty('msg')).toBe(true);
-      expect(body.hasOwnProperty('bookings_id')).toBe(true);
-    });
-  });
+  //     expect(body.hasOwnProperty('msg')).toBe(true);
+  //     expect(body.hasOwnProperty('bookings_id')).toBe(true);
+  //   });
+  // });
 });

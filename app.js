@@ -26,7 +26,7 @@ app.post('/api/properties/:id/reviews', postPropertyReview);
 app.post('/api/properties/:id/favourite', postPropertyFavourited);
 app.delete('/api/properties/:id/users/:user_id/favourite', deletePropertyUsersFavourited);
 app.get('/api/properties/:id/bookings', getPropertyBookings);
-app.post('/api/properties/:id/bookings', postBooking);
+app.post('/api/properties/:id/booking', postBooking);
 
 app.get('/api/users/:id', getUserById);
 app.patch('/api/users/:id', patchUserById);
