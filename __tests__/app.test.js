@@ -66,6 +66,7 @@ describe('app', () => {
     test('responds with the following properties - property_id,property_name,location,price_per_night,host', async () => {
       const { body } = await request(app).get('/api/properties').expect(200);
 
+      console.log(body);
       expect(body.properties.length > 0).toBe(true);
 
       body.properties.forEach((property) => {
@@ -675,6 +676,32 @@ describe('app', () => {
       const { body } = await request(app).get('/api/properties/99/bookings').expect(404);
 
       expect(body.msg).toBe('Property not found.');
+    });
+  });
+
+  describe('POST /api/properties/:id/booking', () => {
+    test('responds with a 201 code and an object', async () => {
+      const payload = {
+        guest_id: 1,
+        check_in_date: '01/07/2025',
+        check_out_date: '15/07/2025',
+      };
+
+      const { body } = await request(app).post('/api/properties/2/bookings').send(payload).expect(201);
+
+      expect(typeof body).toBe('object');
+    });
+    test.only('responds with properties - msg, booking_id', async () => {
+      const payload = {
+        guest_id: 1,
+        check_in_date: '01/07/2025',
+        check_out_date: '15/07/2025',
+      };
+
+      const { body } = await request(app).post('/api/properties/2/bookings').send(payload);
+
+      expect(body.hasOwnProperty('msg')).toBe(true);
+      expect(body.hasOwnProperty('bookings_id')).toBe(true);
     });
   });
 });

@@ -1,5 +1,4 @@
 const db = require('../db/connection');
-const { usersGreenList, propertiesGreenList } = require('../helper_functions/properties-helper');
 
 const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order) => {
   const queryValues = [];
@@ -61,6 +60,20 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order) => {
       }
     }
   }
+
+  `
+  SELECT 
+    DISTINCT properties.property_id ,name AS property_name,location,price_per_night, CONCAT(first_name,' ',surname) AS host,image_url AS image,COUNT(properties.property_id) AS favourited_count
+    FROM properties
+    JOIN users
+    ON properties.host_id=users.user_id
+    LEFT JOIN favourites 
+    ON properties.property_id = favourites.property_id 
+    LEFT JOIN images 
+    ON properties.property_id = images.property_id
+    GROUP BY properties.property_id,property_name,properties.location,properties.price_per_night,users.first_name,users.surname,images.image_url
+    ORDER BY favourited_count DESC;
+    `;
 
   // LEFT JOIN images ON properties.property_id = images.property_id
 
@@ -232,6 +245,8 @@ const fetchPropertyBookings = async (id) => {
   return { bookings, property_id: id };
 };
 
+const sendBooking = async (propertyId, guestId, checkInDate, checkOutDate) => {};
+
 module.exports = {
   fetchProperties,
   fetchPropertyById,
@@ -240,4 +255,5 @@ module.exports = {
   sendPropertyFavourited,
   eraseFavourited,
   fetchPropertyBookings,
+  sendBooking,
 };

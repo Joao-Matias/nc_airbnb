@@ -82,6 +82,16 @@ const getPropertyBookings = async (req, res, next) => {
   res.status(200).send(bookings);
 };
 
+const postBooking = async (req, res, next) => {
+  const { id } = req.params;
+
+  const { guest_id, check_in_date, check_out_date } = req.body;
+
+  await sendBooking(id, guest_id, check_in_date, check_out_date);
+
+  res.status(201).send({});
+};
+
 module.exports = {
   getProperties,
   getPropertyById,
@@ -90,4 +100,5 @@ module.exports = {
   postPropertyFavourited,
   deletePropertyUsersFavourited,
   getPropertyBookings,
+  postBooking,
 };
