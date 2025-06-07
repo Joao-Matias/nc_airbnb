@@ -10,7 +10,7 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order, amenit
   const validSortBy = ['cost_per_night', 'popularity'];
   const validOrderBy = ['ascending', 'descending'];
 
-  if (maxPrice || minPrice || hostId || amenity) {
+  if (maxPrice || minPrice || hostId) {
     whereStr += ' WHERE';
     if (maxPrice) {
       queryValues.push(maxPrice);
@@ -32,17 +32,6 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order, amenit
       whereStr += ` AND users.id=$${queryValues.length}`;
     } else {
       whereStr += ` users.user_id=$${queryValues.length}`;
-    }
-  }
-
-  if (amenity) {
-    for (let i = 0; i < amenity.length; i++) {
-      queryValues.push(amenity[i]);
-      if (maxPrice || minPrice || hostId || i > 0) {
-        whereStr += ` AND amenity=$${queryValues.length}`;
-      } else {
-        whereStr += ` amenity=$${queryValues.length}`;
-      }
     }
   }
 
@@ -74,7 +63,7 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order, amenit
 
   `
   SELECT 
-     properties.property_id ,name AS property_name,location,price_per_night, CONCAT(first_name,' ',surname) AS host,image_url AS image
+     properties.property_id ,name AS property_name,location,price_per_night, CONCAT(first_name,' ',surname) AS host,image_url AS image, ARRAY_AGG(properties_amenities.amenity_slug) AS amenities,COUNT(properties.property_id) AS number
     FROM properties
     JOIN users
     ON properties.host_id=users.user_id
@@ -87,25 +76,16 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order, amenit
     LEFT JOIN (
     SELECT DISTINCT ON (property_id) * FROM images) images
     ON properties.property_id = images.property_id
-    WHERE amenity = 'Washer'
     GROUP BY properties.property_id,property_name,properties.location,properties.price_per_night,users.first_name,users.surname,images.image_url
     ORDER BY COUNT(properties.property_id) DESC;
     `;
 
-  console.log(joinStr);
-  console.log(whereStr);
-  console.log(queryValues);
-
   const { rows: properties } = await db.query(
     `SELECT 
-    properties.property_id ,name AS property_name,location,price_per_night, CONCAT(first_name,' ',surname) AS host,image_url AS image
+    properties.property_id ,name AS property_name,location,price_per_night, CONCAT(first_name,' ',surname) AS host,image_url AS image,COUNT(properties.property_id)
     FROM properties
     JOIN users
     ON properties.host_id=users.user_id
-    JOIN properties_amenities
-    ON properties.property_id = properties_amenities.property_id
-    JOIN amenities
-    ON properties_amenities.amenity_slug = amenities.amenity
     ${joinStr}
     ${whereStr}
     GROUP BY properties.property_id,property_name,properties.location,properties.price_per_night,users.first_name,users.surname,images.image_url

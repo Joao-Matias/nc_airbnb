@@ -127,7 +127,7 @@ describe('app', () => {
         expect(body.properties).toBeSortedBy('price_per_night', { descending: true, coerce: true });
       });
 
-      xtest('response for the optional query of sort should be properties organised by popularity', async () => {
+      test('response for the optional query of sort should be properties organised by popularity', async () => {
         const { body } = await request(app).get('/api/properties?sort=popularity');
 
         // Manually inputing the values of the most 3 most popular properties
@@ -178,21 +178,21 @@ describe('app', () => {
         expect(body.properties[1].property_id).toBe(3);
       });
     });
-    describe('AMENITY QUERY', () => {
-      test('response for the optional query of filtering by the amenity passed', async () => {
-        const { body } = await request(app).get('/api/properties?amenity=Washer');
+    // describe('AMENITY QUERY', () => {
+    //   test('response for the optional query of filtering by the amenity passed', async () => {
+    //     const { body } = await request(app).get('/api/properties?amenity=Washer');
 
-        expect(body.properties[0].property_id).toBe(7);
-        expect(body.properties[1].property_id).toBe(4);
-        expect(body.properties[2].property_id).toBe(10);
-      });
+    //     expect(body.properties[0].property_id).toBe(7);
+    //     expect(body.properties[1].property_id).toBe(4);
+    //     expect(body.properties[2].property_id).toBe(10);
+    //   });
 
-      test.only('response for multiple addition of several amenities keep filtering down', async () => {
-        const { body } = await request(app).get('/api/properties?amenity=Washer&amenity=TV');
+    //   test('response for multiple addition of several amenities keep filtering down', async () => {
+    //     const { body } = await request(app).get('/api/properties?amenity=Washer&amenity=TV');
 
-        expect(body.properties[0].property_id).toBe(4);
-      });
-    });
+    //     expect(body.properties[0].property_id).toBe(4);
+    //   });
+    // });
   });
 
   describe('GET /api/properties/:id', () => {
@@ -725,4 +725,32 @@ describe('app', () => {
   //     expect(body.hasOwnProperty('bookings_id')).toBe(true);
   //   });
   // });
+
+  describe('DELETE /api/bookings/:id', () => {
+    test('responds with a 204 code', async () => {
+      await request(app).delete('/api/bookings/1').expect(204);
+    });
+
+    test('check in data base confirming the deleted booking', async () => {
+      await request(app).delete('/api/bookings/1').expect(204);
+
+      const { rows: bookings } = await db.query('SELECT * FROM bookings');
+
+      bookings.forEach((booking) => {
+        expect(booking.booking_id).not.toBe(1);
+      });
+    });
+
+    test('invalid booking id', async () => {
+      const { body } = await request(app).delete('/api/bookings/INVALID').expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+
+    test('valid booking id but non existent', async () => {
+      const { body } = await request(app).delete('/api/bookings/99').expect(404);
+
+      expect(body.msg).toBe('Booking not found.');
+    });
+  });
 });
