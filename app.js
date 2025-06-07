@@ -14,7 +14,7 @@ const {
 } = require('./controllers/properties.controller');
 const { deleteReviewById } = require('./controllers/reviews.controller');
 const { getAmenities } = require('./controllers/amenities.controller');
-const { deleteBookingById } = require('./controllers/bookings.controller');
+const { deleteBookingById, patchBookingsById } = require('./controllers/bookings.controller');
 
 const app = express();
 
@@ -35,6 +35,7 @@ app.patch('/api/users/:id', patchUserById);
 app.get('/api/amenities', getAmenities);
 
 app.delete('/api/bookings/:id', deleteBookingById);
+app.patch('/api/bookings/:id', patchBookingsById);
 
 app.delete('/api/reviews/:id', deleteReviewById);
 

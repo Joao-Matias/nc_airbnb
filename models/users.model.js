@@ -20,7 +20,15 @@ const fetchUserById = async (id) => {
   return user;
 };
 
-const updateUserById = async (id, firstName, surname, email, phone, avatar) => {
+const updateUserById = async (id, firstName, surname, email, phone, avatar, reqBody) => {
+  const validReqProperties = ['first_name', 'surname', 'email', 'phone', 'avatar'];
+
+  for (const key in reqBody) {
+    if (!validReqProperties.includes(key)) {
+      return Promise.reject();
+    }
+  }
+
   const { queryValues, setStr } = filterUserSetStr(id, firstName, surname, email, phone, avatar);
 
   if (!isMobileNumber(phone)) {

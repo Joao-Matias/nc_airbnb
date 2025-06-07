@@ -753,4 +753,109 @@ describe('app', () => {
       expect(body.msg).toBe('Booking not found.');
     });
   });
+
+  describe('PATCH /api/bookings/:id', () => {
+    test('responds with 200 code and an obj of the specific booking', async () => {
+      const updatedDates = {
+        check_in_date: '2025-06-15',
+        check_out_date: '2025-06-30',
+      };
+
+      const { body } = await request(app).patch('/api/bookings/1').send(updatedDates).expect(200);
+
+      expect(typeof body).toBe('object');
+    });
+
+    test('responds with bookings properties - booking_id,property_id,guest_id,check_in_date,check_out_date,created_at', async () => {
+      const updatedDates = {
+        check_in_date: '2025-06-15',
+        check_out_date: '2025-06-30',
+      };
+
+      const { body } = await request(app).patch('/api/bookings/1').send(updatedDates);
+
+      expect(body.hasOwnProperty('booking_id')).toBe(true);
+      expect(body.hasOwnProperty('property_id')).toBe(true);
+      expect(body.hasOwnProperty('guest_id')).toBe(true);
+      expect(body.hasOwnProperty('check_in_date')).toBe(true);
+      expect(body.hasOwnProperty('check_out_date')).toBe(true);
+      expect(body.hasOwnProperty('created_at')).toBe(true);
+    });
+    test('responds with bookings properties - booking_id,property_id,guest_id,check_in_date,check_out_date,created_at', async () => {
+      const updatedDates = {
+        check_in_date: '2025-06-15',
+        check_out_date: '2025-06-30',
+      };
+
+      const { body } = await request(app).patch('/api/bookings/1').send(updatedDates);
+
+      expect(body.hasOwnProperty('booking_id')).toBe(true);
+      expect(body.hasOwnProperty('property_id')).toBe(true);
+      expect(body.hasOwnProperty('guest_id')).toBe(true);
+      expect(body.hasOwnProperty('check_in_date')).toBe(true);
+      expect(body.hasOwnProperty('check_out_date')).toBe(true);
+      expect(body.hasOwnProperty('created_at')).toBe(true);
+    });
+
+    test('invalid property Id and 400', async () => {
+      const updatedDates = {
+        check_in_date: '2025-06-15',
+        check_out_date: '2025-06-30',
+      };
+
+      const { body } = await request(app).patch('/api/bookings/INVALID').send(updatedDates).expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+    test('valid property Id but non existent, and 404', async () => {
+      const updatedDates = {
+        check_in_date: '2025-06-15',
+        check_out_date: '2025-06-30',
+      };
+
+      const { body } = await request(app).patch('/api/bookings/99').send(updatedDates).expect(404);
+
+      expect(body.msg).toBe('Booking not found.');
+    });
+
+    test('missing checkin', async () => {
+      const updatedDates = {
+        check_out_date: '2025-06-30',
+      };
+
+      const { body } = await request(app).patch('/api/bookings/1').send(updatedDates).expect(400);
+
+      expect(body.msg).toBe('Date missing.');
+    });
+    test('missing checkin', async () => {
+      const updatedDates = {
+        check_in_date: '2025-06-30',
+      };
+
+      const { body } = await request(app).patch('/api/bookings/1').send(updatedDates).expect(400);
+
+      expect(body.msg).toBe('Date missing.');
+    });
+
+    test('invalid checkin responds with and 404', async () => {
+      const updatedDates = {
+        check_in_date: 'INVALID',
+        check_out_date: '2025-06-30',
+      };
+
+      const { body } = await request(app).patch('/api/bookings/1').send(updatedDates).expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+    test('invalid checkout responds with and 404', async () => {
+      const updatedDates = {
+        check_in_date: '2025-06-30',
+        check_out_date: 'INVALID',
+      };
+
+      const { body } = await request(app).patch('/api/bookings/1').send(updatedDates).expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+  });
 });
