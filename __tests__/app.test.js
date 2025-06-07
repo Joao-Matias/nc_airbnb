@@ -187,7 +187,7 @@ describe('app', () => {
     //     expect(body.properties[2].property_id).toBe(10);
     //   });
 
-    //   test('response for multiple addition of several amenities keep filtering down', async () => {
+    //   test.only('response for multiple addition of several amenities keep filtering down', async () => {
     //     const { body } = await request(app).get('/api/properties?amenity=Washer&amenity=TV');
 
     //     expect(body.properties[0].property_id).toBe(4);
@@ -864,9 +864,9 @@ describe('app', () => {
         check_out_date: '2025-07-15',
       };
 
-      const { body } = await request(app).post('/api/properties/INVALID').send(payload).expect(404);
+      const { body } = await request(app).post('/api/properties/INVALID/booking').send(payload).expect(400);
 
-      expect(body.msg).toBe('Path not found.');
+      expect(body.msg).toBe('Bad request.');
     });
     test('invalid property id', async () => {
       const payload = {
@@ -997,6 +997,117 @@ describe('app', () => {
       const { body } = await request(app).get('/api/users/99/bookings').expect(404);
 
       expect(body.msg).toBe('Id passed not found.');
+    });
+  });
+
+  describe('INVALID METHODS', () => {
+    test('/api/reviews/:id', async () => {
+      const invalidMethods = ['get', 'post', 'put', 'patch'];
+
+      invalidMethods.forEach(async (method) => {
+        const { body } = await request(app)[method]('/api/reviews/1').expect(405);
+
+        expect(body.msg).toBe('Invalid method.');
+      });
+    });
+    test('/api/amenities', async () => {
+      const invalidMethods = ['delete', 'post', 'put', 'patch'];
+
+      invalidMethods.forEach(async (method) => {
+        const { body } = await request(app)[method]('/api/amenities').expect(405);
+
+        expect(body.msg).toBe('Invalid method.');
+      });
+    });
+    test('/api/bookings/:id', async () => {
+      const invalidMethods = ['get', 'post', 'put'];
+
+      invalidMethods.forEach(async (method) => {
+        const { body } = await request(app)[method]('/api/bookings/1').expect(405);
+
+        expect(body.msg).toBe('Invalid method.');
+      });
+    });
+    test('/api/properties', async () => {
+      const invalidMethods = ['delete', 'patch', 'post', 'put'];
+
+      invalidMethods.forEach(async (method) => {
+        const { body } = await request(app)[method]('/api/properties').expect(405);
+
+        expect(body.msg).toBe('Invalid method.');
+      });
+    });
+    test('/api/properties/:id', async () => {
+      const invalidMethods = ['delete', 'patch', 'post', 'put'];
+
+      invalidMethods.forEach(async (method) => {
+        const { body } = await request(app)[method]('/api/properties/1').expect(405);
+
+        expect(body.msg).toBe('Invalid method.');
+      });
+    });
+    test('/api/properties/:id/booking', async () => {
+      const invalidMethods = ['get', 'delete', 'patch', 'put'];
+
+      invalidMethods.forEach(async (method) => {
+        const { body } = await request(app)[method]('/api/properties/1/booking').expect(405);
+
+        expect(body.msg).toBe('Invalid method.');
+      });
+    });
+    test('/api/properties/:id/reviews', async () => {
+      const invalidMethods = ['delete', 'patch', 'put'];
+
+      invalidMethods.forEach(async (method) => {
+        const { body } = await request(app)[method]('/api/properties/1/reviews').expect(405);
+
+        expect(body.msg).toBe('Invalid method.');
+      });
+    });
+    test('/api/properties/:id/favourite', async () => {
+      const invalidMethods = ['get', 'delete', 'patch', 'put'];
+
+      invalidMethods.forEach(async (method) => {
+        const { body } = await request(app)[method]('/api/properties/1/favourite').expect(405);
+
+        expect(body.msg).toBe('Invalid method.');
+      });
+    });
+    test('/api/properties/:id/users/:user_id/favourite', async () => {
+      const invalidMethods = ['post', 'get', 'patch', 'put'];
+
+      invalidMethods.forEach(async (method) => {
+        const { body } = await request(app)[method]('/api/properties/1/users/1/favourite').expect(405);
+
+        expect(body.msg).toBe('Invalid method.');
+      });
+    });
+    test('/api/properties/:id/bookings', async () => {
+      const invalidMethods = ['post', 'delete', 'patch', 'put'];
+
+      invalidMethods.forEach(async (method) => {
+        const { body } = await request(app)[method]('/api/properties/1/bookings').expect(405);
+
+        expect(body.msg).toBe('Invalid method.');
+      });
+    });
+    test('/api/users/:id', async () => {
+      const invalidMethods = ['post', 'delete', 'put'];
+
+      invalidMethods.forEach(async (method) => {
+        const { body } = await request(app)[method]('/api/users/1').expect(405);
+
+        expect(body.msg).toBe('Invalid method.');
+      });
+    });
+    test('/api/users/:id/bookings', async () => {
+      const invalidMethods = ['post', 'delete', 'put', 'patch'];
+
+      invalidMethods.forEach(async (method) => {
+        const { body } = await request(app)[method]('/api/users/1/bookings').expect(405);
+
+        expect(body.msg).toBe('Invalid method.');
+      });
     });
   });
 });

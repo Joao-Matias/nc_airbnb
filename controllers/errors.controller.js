@@ -2,6 +2,10 @@ const handlePathNotFound = async (req, res, next) => {
   res.status(404).send({ msg: 'Path not found.' });
 };
 
+const handleInvalidMethod = (req, res, next) => {
+  res.status(405).send({ msg: 'Invalid method.' });
+};
+
 const handleIdPassedNotFound = (err, req, res, next) => {
   if (err.code === '23503') {
     res.status(404).send({ msg: 'Id passed not found.' });
@@ -18,4 +22,10 @@ const handleBadRequest = (err, req, res, next) => {
   res.status(400).send({ msg: 'Bad request.' });
 };
 
-module.exports = { handlePathNotFound, handleBadRequest, handleCustomErrors, handleIdPassedNotFound };
+module.exports = {
+  handlePathNotFound,
+  handleBadRequest,
+  handleCustomErrors,
+  handleIdPassedNotFound,
+  handleInvalidMethod,
+};

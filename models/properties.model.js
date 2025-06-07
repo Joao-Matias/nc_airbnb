@@ -63,19 +63,19 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order, amenit
 
   `
   SELECT 
-     properties.property_id ,name AS property_name,location,price_per_night, CONCAT(first_name,' ',surname) AS host,image_url AS image, ARRAY_AGG(properties_amenities.amenity_slug) AS amenities,COUNT(properties.property_id) AS number
+    properties.property_id ,name AS property_name,location,price_per_night, CONCAT(first_name,' ',surname) AS host,image_url AS image,COUNT(properties.property_id) AS number, ARRAY_AGG(amenity)
     FROM properties
     JOIN users
     ON properties.host_id=users.user_id
-    JOIN properties_amenities
-    ON properties.property_id = properties_amenities.property_id
-    JOIN amenities
-    ON properties_amenities.amenity_slug = amenities.amenity
     LEFT JOIN favourites 
     ON properties.property_id = favourites.property_id 
     LEFT JOIN (
     SELECT DISTINCT ON (property_id) * FROM images) images
     ON properties.property_id = images.property_id
+    JOIN properties_amenities
+    ON properties.property_id = properties_amenities.property_id
+    JOIN amenities
+    ON properties_amenities.amenity_slug = amenities.amenity
     GROUP BY properties.property_id,property_name,properties.location,properties.price_per_night,users.first_name,users.surname,images.image_url
     ORDER BY COUNT(properties.property_id) DESC;
     `;
