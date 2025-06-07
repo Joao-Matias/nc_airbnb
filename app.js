@@ -1,7 +1,12 @@
 const express = require('express');
 
 const { getUserById, patchUserById } = require('./controllers/users.controller');
-const { handlePathNotFound, handleBadRequest, handleCustomErrors } = require('./controllers/errors.controller');
+const {
+  handlePathNotFound,
+  handleBadRequest,
+  handleCustomErrors,
+  handleIdPassedNotFound,
+} = require('./controllers/errors.controller');
 const {
   getProperties,
   getPropertyById,
@@ -41,6 +46,7 @@ app.delete('/api/reviews/:id', deleteReviewById);
 
 app.all('/*invalid_path', handlePathNotFound);
 
+app.use(handleIdPassedNotFound);
 app.use(handleCustomErrors);
 app.use(handleBadRequest);
 

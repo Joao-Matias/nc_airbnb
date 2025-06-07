@@ -370,9 +370,9 @@ describe('app', () => {
         comment: 'Perfect stay.',
       };
 
-      const { body } = await request(app).post('/api/properties/1/reviews').send(newReview).expect(400);
+      const { body } = await request(app).post('/api/properties/1/reviews').send(newReview).expect(404);
 
-      expect(body.msg).toBe('Bad request.');
+      expect(body.msg).toBe('Id passed not found.');
     });
 
     test('Missing properties from the body responds with 400', async () => {
@@ -700,32 +700,6 @@ describe('app', () => {
     });
   });
 
-  // describe('POST /api/properties/:id/booking', () => {
-  //   test('responds with a 201 code and an object', async () => {
-  //     const payload = {
-  //       guest_id: 1,
-  //       check_in_date: '01/07/2025',
-  //       check_out_date: '15/07/2025',
-  //     };
-
-  //     const { body } = await request(app).post('/api/properties/2/booking').send(payload).expect(201);
-
-  //     expect(typeof body).toBe('object');
-  //   });
-  //   test('responds with properties - msg, booking_id', async () => {
-  //     const payload = {
-  //       guest_id: 1,
-  //       check_in_date: '01/07/2025',
-  //       check_out_date: '15/07/2025',
-  //     };
-
-  //     const { body } = await request(app).post('/api/properties/2/booking').send(payload);
-
-  //     expect(body.hasOwnProperty('msg')).toBe(true);
-  //     expect(body.hasOwnProperty('bookings_id')).toBe(true);
-  //   });
-  // });
-
   describe('DELETE /api/bookings/:id', () => {
     test('responds with a 204 code', async () => {
       await request(app).delete('/api/bookings/1').expect(204);
@@ -857,5 +831,126 @@ describe('app', () => {
 
       expect(body.msg).toBe('Bad request.');
     });
+  });
+
+  describe('POST /api/properties/:id/booking', () => {
+    test('responds with a 201 code and an object', async () => {
+      const payload = {
+        guest_id: 1,
+        check_in_date: '2025-07-01',
+        check_out_date: '2025-07-15',
+      };
+
+      const { body } = await request(app).post('/api/properties/2/booking').send(payload).expect(201);
+
+      expect(typeof body).toBe('object');
+    });
+    test('responds with properties - msg, booking_id', async () => {
+      const payload = {
+        guest_id: 1,
+        check_in_date: '2025-07-01',
+        check_out_date: '2025-07-15',
+      };
+
+      const { body } = await request(app).post('/api/properties/2/booking').send(payload);
+
+      expect(body.hasOwnProperty('msg')).toBe(true);
+      expect(body.hasOwnProperty('booking_id')).toBe(true);
+    });
+    test('invalid path', async () => {
+      const payload = {
+        guest_id: 1,
+        check_in_date: '2025-07-01',
+        check_out_date: '2025-07-15',
+      };
+
+      const { body } = await request(app).post('/api/properties/INVALID').send(payload).expect(404);
+
+      expect(body.msg).toBe('Path not found.');
+    });
+    test('invalid property id', async () => {
+      const payload = {
+        guest_id: 1,
+        check_in_date: '2025-07-01',
+        check_out_date: '2025-07-15',
+      };
+
+      const { body } = await request(app).post('/api/properties/INVALID/booking').send(payload).expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+
+    test('invalid property id', async () => {
+      const payload = {
+        guest_id: 1,
+        check_in_date: '2025-07-01',
+        check_out_date: '2025-07-15',
+      };
+
+      const { body } = await request(app).post('/api/properties/99/booking').send(payload).expect(404);
+
+      expect(body.msg).toBe('Id passed not found.');
+    });
+
+    test('invalid guest Id', async () => {
+      const payload = {
+        guest_id: 'INVALID',
+        check_in_date: '2025-07-01',
+        check_out_date: '2025-07-15',
+      };
+      const { body } = await request(app).post('/api/properties/1/booking').send(payload).expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+    test('invalid check in', async () => {
+      const payload = {
+        guest_id: 1,
+        check_in_date: 'INVALID',
+        check_out_date: '2025-07-15',
+      };
+      const { body } = await request(app).post('/api/properties/1/booking').send(payload).expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+    test('invalid check out', async () => {
+      const payload = {
+        guest_id: 1,
+        check_in_date: '2025-07-01',
+        check_out_date: 'INVALID',
+      };
+      const { body } = await request(app).post('/api/properties/1/booking').send(payload).expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+
+    test('valid guest id but not found', async () => {
+      const payload = {
+        guest_id: 99,
+        check_in_date: '2025-07-01',
+        check_out_date: '2025-07-15',
+      };
+      const { body } = await request(app).post('/api/properties/1/booking').send(payload).expect(404);
+
+      expect(body.msg).toBe('Id passed not found.');
+    });
+    test('valid check out date before check in date', async () => {
+      const payload = {
+        guest_id: 1,
+        check_in_date: '2025-07-01',
+        check_out_date: '2025-06-15',
+      };
+      const { body } = await request(app).post('/api/properties/1/booking').send(payload).expect(400);
+
+      expect(body.msg).toBe('Checkout date needs to be after checkin date.');
+    });
+
+    // test('', async () => {
+    //   const payload = {
+    //     guest_id: 1,
+    //     check_in_date: '2025-07-01',
+    //     check_out_date: '2025-07-15',
+    //   };
+    //   const { body } = await request(app).post('/api/properties/1/booking').send(payload).expect(400);
+    // });
   });
 });

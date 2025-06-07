@@ -184,31 +184,22 @@ const sendPropertyReview = async (propertyId, guestId, rating, comment) => {
 };
 
 const sendPropertyFavourited = async (propertyId, guestId) => {
-  try {
-    if (guestId === undefined) {
-      return Promise.reject({ status: 400, msg: 'Missing guest_id.' });
-    }
+  if (guestId === undefined) {
+    return Promise.reject({ status: 400, msg: 'Missing guest_id.' });
+  }
 
-    const {
-      rows: [propertyFavourited],
-    } = await db.query(
-      `
+  const {
+    rows: [propertyFavourited],
+  } = await db.query(
+    `
       INSERT INTO favourites (guest_id,property_id)
       VALUES($1,$2) RETURNING *;
   
       `,
-      [guestId, propertyId]
-    );
+    [guestId, propertyId]
+  );
 
-    return { msg: 'Property favourited successfully.', favourite_id: propertyFavourited.favourite_id };
-  } catch (error) {
-    if (error.code === '22P02') {
-      return Promise.reject();
-    }
-    if (error.code === '23503') {
-      return Promise.reject({ status: 404, msg: 'Id passed not found.' });
-    }
-  }
+  return { msg: 'Property favourited successfully.', favourite_id: propertyFavourited.favourite_id };
 };
 
 const eraseFavourited = async (propertyId, userId) => {
@@ -244,7 +235,25 @@ const fetchPropertyBookings = async (id) => {
   return { bookings, property_id: id };
 };
 
-const sendBooking = async (propertyId, guestId, checkInDate, checkOutDate) => {};
+const sendBooking = async (propertyId, guestId, checkInDate, checkOutDate) => {
+  const queryValues = [propertyId, guestId, checkInDate, checkOutDate];
+
+  if (new Date(checkOutDate) < new Date(checkInDate)) {
+    return Promise.reject({ status: 400, msg: 'Checkout date needs to be after checkin date.' });
+  }
+
+  const {
+    rows: [booking],
+  } = await db.query(
+    `
+    INSERT INTO bookings (property_id,guest_id,check_in_date,check_out_date)
+    VALUES($1,$2,$3,$4) RETURNING *;
+    `,
+    queryValues
+  );
+
+  return { msg: 'Booking successful.', booking_id: booking.booking_id };
+};
 
 module.exports = {
   fetchProperties,

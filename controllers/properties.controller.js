@@ -6,6 +6,7 @@ const {
   sendPropertyFavourited,
   eraseFavourited,
   fetchPropertyBookings,
+  sendBooking,
 } = require('../models/properties.model');
 
 const getProperties = async (req, res, next) => {
@@ -51,19 +52,26 @@ const postPropertyReview = async (req, res, next) => {
 
   const { guest_id, rating, comment } = req.body;
   const { id } = req.params;
+  try {
+    const insertedReview = await sendPropertyReview(id, guest_id, rating, comment);
 
-  const insertedReview = await sendPropertyReview(id, guest_id, rating, comment);
-
-  res.status(201).send(insertedReview);
+    res.status(201).send(insertedReview);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const postPropertyFavourited = async (req, res, next) => {
   const { id } = req.params;
   const { guest_id } = req.body;
 
-  const property = await sendPropertyFavourited(id, guest_id);
+  try {
+    const property = await sendPropertyFavourited(id, guest_id);
 
-  res.status(201).send(property);
+    res.status(201).send(property);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const deletePropertyUsersFavourited = async (req, res, next) => {
@@ -87,9 +95,13 @@ const postBooking = async (req, res, next) => {
 
   const { guest_id, check_in_date, check_out_date } = req.body;
 
-  await sendBooking(id, guest_id, check_in_date, check_out_date);
+  try {
+    const booking = await sendBooking(id, guest_id, check_in_date, check_out_date);
 
-  res.status(201).send({});
+    res.status(201).send(booking);
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {
