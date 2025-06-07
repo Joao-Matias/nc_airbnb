@@ -953,4 +953,50 @@ describe('app', () => {
     //   const { body } = await request(app).post('/api/properties/1/booking').send(payload).expect(400);
     // });
   });
+
+  describe('GET /api/users/:id/bookings', () => {
+    test('respond with a 200 code and an array', async () => {
+      const { body } = await request(app).get('/api/users/1/bookings').expect(200);
+
+      expect(Array.isArray(body.bookings)).toBe(true);
+    });
+    test('responds with properties - booking_id,check_in_date,check_out_date,property_id,property_name,host,image', async () => {
+      const { body } = await request(app).get('/api/users/1/bookings').expect(200);
+
+      expect(body.bookings.length > 0).toBe(true);
+
+      body.bookings.forEach((booking) => {
+        expect(booking.hasOwnProperty('booking_id')).toBe(true);
+        expect(booking.hasOwnProperty('check_in_date')).toBe(true);
+        expect(booking.hasOwnProperty('check_out_date')).toBe(true);
+        expect(booking.hasOwnProperty('property_id')).toBe(true);
+        expect(booking.hasOwnProperty('property_name')).toBe(true);
+        expect(booking.hasOwnProperty('host')).toBe(true);
+        expect(booking.hasOwnProperty('image')).toBe(true);
+      });
+    });
+    test('responds with chronological order for the check in dates', async () => {
+      const { body } = await request(app).get('/api/users/1/bookings').expect(200);
+
+      expect(body.bookings[0].booking_id).toBe(1);
+      expect(body.bookings[1].booking_id).toBe(3);
+      expect(body.bookings[2].booking_id).toBe(4);
+      expect(body.bookings[3].booking_id).toBe(2);
+    });
+    test('invalid path responds with 404', async () => {
+      const { body } = await request(app).get('/api/users/INVALID').expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+    test('invalid user id responds with 404', async () => {
+      const { body } = await request(app).get('/api/users/INVALID/bookings').expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+    test('valid user id but non existent responds with 404', async () => {
+      const { body } = await request(app).get('/api/users/99/bookings').expect(404);
+
+      expect(body.msg).toBe('Id passed not found.');
+    });
+  });
 });

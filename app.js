@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { getUserById, patchUserById } = require('./controllers/users.controller');
+const { getUserById, patchUserById, getUserBookings } = require('./controllers/users.controller');
 const {
   handlePathNotFound,
   handleBadRequest,
@@ -36,6 +36,7 @@ app.post('/api/properties/:id/booking', postBooking);
 
 app.get('/api/users/:id', getUserById);
 app.patch('/api/users/:id', patchUserById);
+app.get('/api/users/:id/bookings', getUserBookings);
 
 app.get('/api/amenities', getAmenities);
 

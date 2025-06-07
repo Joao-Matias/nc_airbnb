@@ -1,4 +1,4 @@
-const { fetchUserById, updateUserById } = require('../models/users.model');
+const { fetchUserById, updateUserById, fetchUserBookings } = require('../models/users.model');
 
 const getUserById = async (req, res, next) => {
   const { id } = req.params;
@@ -16,4 +16,12 @@ const patchUserById = async (req, res, next) => {
   res.status(200).send({ user });
 };
 
-module.exports = { getUserById, patchUserById };
+const getUserBookings = async (req, res, next) => {
+  const { id } = req.params;
+
+  const bookings = await fetchUserBookings(id);
+
+  res.status(200).send({ bookings });
+};
+
+module.exports = { getUserById, patchUserById, getUserBookings };
