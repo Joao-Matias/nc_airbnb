@@ -12,11 +12,9 @@ const app = express();
 
 app.use(express.json());
 
-app.use('/api', apiRouter);
+app.use(express.static('/'));
 
-app.get('/', (req, res) => {
-  res.sendFile(`${__dirname}/index.html`);
-});
+app.use('/api', apiRouter);
 
 app.all('/*invalid_path', handlePathNotFound);
 
