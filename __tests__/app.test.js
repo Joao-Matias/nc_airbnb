@@ -397,6 +397,43 @@ describe('app', () => {
     });
   });
 
+  describe('GET /api/properties/:id/amenities', () => {
+    test('responds with 200 and an array for the amenities', async () => {
+      const { body } = await request(app).get('/api/properties/1/amenities').expect(200);
+
+      expect(Array.isArray(body.amenities)).toBe(true);
+    });
+
+    test('responds with an array of amenities from passed property', async () => {
+      const { body } = await request(app).get('/api/properties/4/amenities');
+
+      // Manually checking the values from DB
+
+      expect(body.amenities[0]).toBe('TV');
+      expect(body.amenities[1]).toBe('Kitchen');
+      expect(body.amenities[2]).toBe('Washer');
+    });
+
+    test('responds with property_id, name, amenities properties', async () => {
+      const { body } = await request(app).get('/api/properties/4/amenities');
+
+      expect(body.hasOwnProperty('property_id')).toBe(true);
+      expect(body.hasOwnProperty('name')).toBe(true);
+      expect(body.hasOwnProperty('amenities')).toBe(true);
+    });
+
+    test('invalid property Id responds with 400 and msg', async () => {
+      const { body } = await request(app).get('/api/properties/invalid_id/amenities').expect(400);
+
+      expect(body.msg).toBe('Bad request.');
+    });
+    test('valid property ID by non-existent responds with 404 and msg', async () => {
+      const { body } = await request(app).get('/api/properties/99/amenities').expect(404);
+
+      expect(body.msg).toBe('Property not found.');
+    });
+  });
+
   describe('PATCH /api/users/:id', () => {
     test('responds with an object', async () => {
       const updatedUser = {

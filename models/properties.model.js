@@ -63,7 +63,7 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order, amenit
 
   `
   SELECT 
-    properties.property_id ,name AS property_name,location,price_per_night, CONCAT(first_name,' ',surname) AS host,image_url AS image,COUNT(properties.property_id) AS number, ARRAY_AGG(amenity)
+    properties.property_id ,name AS property_name,location,price_per_night, CONCAT(first_name,' ',surname) AS host,image_url AS image,COUNT(properties.property_id) AS number, (SELECT ARRAY_AGG(amenity_slug) from properties_amenities) AS amenities
     FROM properties
     JOIN users
     ON properties.host_id=users.user_id
@@ -72,10 +72,6 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order, amenit
     LEFT JOIN (
     SELECT DISTINCT ON (property_id) * FROM images) images
     ON properties.property_id = images.property_id
-    JOIN properties_amenities
-    ON properties.property_id = properties_amenities.property_id
-    JOIN amenities
-    ON properties_amenities.amenity_slug = amenities.amenity
     GROUP BY properties.property_id,property_name,properties.location,properties.price_per_night,users.first_name,users.surname,images.image_url
     ORDER BY COUNT(properties.property_id) DESC;
     `;
@@ -255,6 +251,25 @@ const sendBooking = async (propertyId, guestId, checkInDate, checkOutDate) => {
   return { msg: 'Booking successful.', booking_id: booking.booking_id };
 };
 
+const fetchPropertyAmenities = async (id) => {
+  const {
+    rows: [amenities],
+  } = await db.query(
+    `
+    SELECT property_id,name, (SELECT ARRAY_AGG(amenity_slug) from properties_amenities WHERE property_id=$1) AS amenities
+    FROM properties
+    WHERE properties.property_id = $1
+    `,
+    [id]
+  );
+
+  if (amenities === undefined) {
+    return Promise.reject({ status: 404, msg: 'Property not found.' });
+  }
+
+  return amenities;
+};
+
 module.exports = {
   fetchProperties,
   fetchPropertyById,
@@ -264,4 +279,5 @@ module.exports = {
   eraseFavourited,
   fetchPropertyBookings,
   sendBooking,
+  fetchPropertyAmenities,
 };
