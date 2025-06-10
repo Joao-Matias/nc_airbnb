@@ -178,21 +178,21 @@ describe('app', () => {
         expect(body.properties[1].property_id).toBe(3);
       });
     });
-    // describe('AMENITY QUERY', () => {
-    //   test('response for the optional query of filtering by the amenity passed', async () => {
-    //     const { body } = await request(app).get('/api/properties?amenity=Washer');
+    describe('AMENITY QUERY', () => {
+      test('response for the optional query of filtering by the amenity passed', async () => {
+        const { body } = await request(app).get('/api/properties?amenity=Washer');
 
-    //     expect(body.properties[0].property_id).toBe(7);
-    //     expect(body.properties[1].property_id).toBe(4);
-    //     expect(body.properties[2].property_id).toBe(10);
-    //   });
+        expect(body.properties[0].property_id).toBe(7);
+        expect(body.properties[1].property_id).toBe(4);
+        expect(body.properties[2].property_id).toBe(10);
+      });
 
-    //   test.only('response for multiple addition of several amenities keep filtering down', async () => {
-    //     const { body } = await request(app).get('/api/properties?amenity=Washer&amenity=TV');
+      test('response for multiple addition of several amenities keep filtering down', async () => {
+        const { body } = await request(app).get('/api/properties?amenity=Washer&amenity=TV');
 
-    //     expect(body.properties[0].property_id).toBe(4);
-    //   });
-    // });
+        expect(body.properties[0].property_id).toBe(4);
+      });
+    });
   });
 
   describe('GET /api/properties/:id', () => {
@@ -279,8 +279,6 @@ describe('app', () => {
 
       expect(body.msg).toBe('Property not found.');
     });
-
-    test('>>>UNSURE<<< how to order the test', () => {});
   });
 
   describe('POST /api/properties/:id/reviews', () => {
@@ -917,7 +915,7 @@ describe('app', () => {
       expect(body.msg).toBe('Bad request.');
     });
 
-    test('invalid property id', async () => {
+    test('valid property id but non existent', async () => {
       const payload = {
         guest_id: 1,
         check_in_date: '2025-07-01',
@@ -980,15 +978,6 @@ describe('app', () => {
 
       expect(body.msg).toBe('Checkout date needs to be after checkin date.');
     });
-
-    // test('', async () => {
-    //   const payload = {
-    //     guest_id: 1,
-    //     check_in_date: '2025-07-01',
-    //     check_out_date: '2025-07-15',
-    //   };
-    //   const { body } = await request(app).post('/api/properties/1/booking').send(payload).expect(400);
-    // });
   });
 
   describe('GET /api/users/:id/bookings', () => {

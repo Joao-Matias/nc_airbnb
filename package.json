@@ -2,12 +2,15 @@
   "name": "nc_airbnb",
   "version": "1.0.0",
   "description": "This project will aim to replicate a properties booking website where you can add houses to rent. You will be able to view several houses within the the search page. Selecting one will bring you to the dedicated page and allow you to see more information related to that house. You will be able to rent a house for X amount of day, blocking the house (since its been booked). You will be able to add reviews to houses and users.",
-  "main": "index.js",
+  "main": "listen.js",
   "scripts": {
     "test-insertdata": "jest insertData",
     "test": "jest app",
-    "seed": "node ./db/seed-run",
-    "create-db": "psql -f ./db/data/test/util-functions/create-database.sql"
+    "seed-dev": "node ./db/seed-run",
+    "seed-prod": "NODE_ENV=production node ./db/seed-run",
+    "create-dbs": "psql -f ./db/db-util-functions/create-database.sql",
+    "dev": "nodemon listen.js",
+    "start": "node listen.js"
   },
   "repository": {
     "type": "git",

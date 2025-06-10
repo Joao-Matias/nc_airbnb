@@ -8,7 +8,7 @@ const {
   imagesData,
   favouritesData,
   bookingsData,
-} = require('./data/test/index');
+} = require('./data/dev/index');
 
 seed(usersData, propertyTypesData, propertiesData, reviewsData, imagesData, favouritesData, bookingsData).then(() => {
   db.end();
