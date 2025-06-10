@@ -14,6 +14,10 @@ app.use(express.json());
 
 app.use('/api', apiRouter);
 
+app.get('/', (req, res) => {
+  res.sendFile(`${__dirname}/index.html`);
+});
+
 app.all('/*invalid_path', handlePathNotFound);
 
 app.use(handleIdPassedNotFound);
