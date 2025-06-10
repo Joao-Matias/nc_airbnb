@@ -12,7 +12,7 @@ const app = express();
 
 app.use(express.json());
 
-app.use(express.static('/'));
+app.use(express.static('/index.html'));
 
 app.use('/api', apiRouter);
 
