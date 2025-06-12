@@ -3,14 +3,18 @@ const db = require('../db/connection');
 const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order, amenity) => {
   const queryValues = [];
   let whereStr = '';
-  let sortStr = 'ORDER BY COUNT(favourites.property_id)';
+  let sortStr = 'ORDER BY COUNT(properties.property_id)';
   let joinStr = ` LEFT JOIN favourites ON properties.property_id = favourites.property_id LEFT JOIN (SELECT DISTINCT ON (property_id) * FROM images) images ON properties.property_id = images.property_id`;
   let orderStr = ' DESC';
+  let havingStr = '';
 
+  const { rows: currentAmenities } = await db.query(`SELECT * FROM amenities;`);
+
+  const validAmenities = currentAmenities.map(({ amenity }) => amenity);
   const validSortBy = ['cost_per_night', 'popularity'];
   const validOrderBy = ['ascending', 'descending'];
 
-  if (maxPrice || minPrice || hostId) {
+  if (maxPrice || minPrice || hostId || amenity) {
     whereStr += ' WHERE';
     if (maxPrice) {
       queryValues.push(maxPrice);
@@ -49,6 +53,42 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order, amenit
     }
   }
 
+  if (amenity) {
+    for (let i = 0; i < amenity.length; i++) {
+      if (!validAmenities.includes(amenity[i])) {
+        return Promise.reject({ status: 400, msg: 'Invalid amenity passed.' });
+      }
+    }
+    if (Array.isArray(amenity)) {
+      queryValues.push(...amenity);
+
+      havingStr += ` HAVING COUNT(DISTINCT amenity_slug) = ${amenity.length}`;
+    } else {
+      queryValues.push(amenity);
+      havingStr += ` HAVING COUNT(DISTINCT amenity_slug) = 1`;
+    }
+
+    if (maxPrice || minPrice || hostId) {
+      whereStr += ` AND amenity_slug IN (`;
+    } else {
+      whereStr += ` amenity_slug IN (`;
+    }
+
+    if (!Array.isArray(amenity)) {
+      whereStr += ` $${queryValues.length})`;
+    } else {
+      for (let i = 0; i < amenity.length; i++) {
+        const indexOfAmenity = queryValues.indexOf(amenity[i]) + 1;
+        whereStr += `$${indexOfAmenity},`;
+      }
+      whereStr = whereStr.slice(0, -1) + `)`;
+    }
+    joinStr += ` LEFT JOIN properties_amenities
+    ON properties.property_id = properties_amenities.property_id
+    LEFT JOIN amenities
+    ON properties_amenities.amenity_slug = amenities.amenity`;
+  }
+
   if (order) {
     if (!validOrderBy.includes(order)) {
       return Promise.reject({ status: 400, msg: 'Invalid order query.' });
@@ -61,21 +101,6 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order, amenit
     }
   }
 
-  `
-  SELECT 
-    properties.property_id ,name AS property_name,location,price_per_night, CONCAT(first_name,' ',surname) AS host,image_url AS image,COUNT(properties.property_id) AS number
-    FROM properties
-    JOIN users
-    ON properties.host_id=users.user_id
-    LEFT JOIN favourites 
-    ON properties.property_id = favourites.property_id 
-    LEFT JOIN (
-    SELECT DISTINCT ON (property_id) * FROM images) images
-    ON properties.property_id = images.property_id
-    GROUP BY properties.property_id,property_name,properties.location,properties.price_per_night,users.first_name,users.surname,images.image_url
-    ORDER BY COUNT(properties.property_id) DESC;
-    `;
-
   const { rows: properties } = await db.query(
     `SELECT 
     properties.property_id ,name AS property_name,location,price_per_night, CONCAT(first_name,' ',surname) AS host,image_url AS image,COUNT(properties.property_id)
@@ -85,6 +110,7 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order, amenit
     ${joinStr}
     ${whereStr}
     GROUP BY properties.property_id,property_name,properties.location,properties.price_per_night,users.first_name,users.surname,images.image_url
+    ${havingStr}
     ${sortStr} ${orderStr};`,
     queryValues
   );

@@ -11,15 +11,15 @@ npm i
 ## Creating and connecting to the database
 
 ```
-Run the command 'npm run create-db'
+Run the command 'npm run create-dbs'
 ```
 
 ## Linking the database
 
-By creating a `.env` file and adding `PGDATABASE=airbnc_test` variable to it, you will be able to locally access the created database.
+By creating a `.env.test` file and adding `PGDATABASE=airbnc_test` variable to it, you will be able to locally access the created database.
 
 ## Seed you database
 
 ```
-npm run seed
+npm run seed-dev
 ```

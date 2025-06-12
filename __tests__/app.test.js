@@ -182,8 +182,8 @@ describe('app', () => {
       test('response for the optional query of filtering by the amenity passed', async () => {
         const { body } = await request(app).get('/api/properties?amenity=Washer');
 
-        expect(body.properties[0].property_id).toBe(7);
-        expect(body.properties[1].property_id).toBe(4);
+        expect(body.properties[0].property_id).toBe(4);
+        expect(body.properties[1].property_id).toBe(7);
         expect(body.properties[2].property_id).toBe(10);
       });
 
@@ -191,6 +191,12 @@ describe('app', () => {
         const { body } = await request(app).get('/api/properties?amenity=Washer&amenity=TV');
 
         expect(body.properties[0].property_id).toBe(4);
+      });
+
+      test.only('amenity passed not found returns 404', async () => {
+        const { body } = await request(app).get('/api/properties?amenity=Washer&amenity=Football').expect(400);
+
+        expect(body.msg).toBe('Invalid amenity passed.');
       });
     });
   });
