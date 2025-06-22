@@ -193,7 +193,7 @@ describe('app', () => {
         expect(body.properties[0].property_id).toBe(4);
       });
 
-      test.only('amenity passed not found returns 404', async () => {
+      test('amenity passed not found returns 404', async () => {
         const { body } = await request(app).get('/api/properties?amenity=Washer&amenity=Football').expect(400);
 
         expect(body.msg).toBe('Invalid amenity passed.');
@@ -889,7 +889,7 @@ describe('app', () => {
     test('responds with properties - msg, booking_id', async () => {
       const payload = {
         guest_id: 1,
-        check_in_date: '2025-07-01',
+        check_in_date: '2025-07-10',
         check_out_date: '2025-07-15',
       };
 
@@ -983,6 +983,16 @@ describe('app', () => {
       const { body } = await request(app).post('/api/properties/1/booking').send(payload).expect(400);
 
       expect(body.msg).toBe('Checkout date needs to be after checkin date.');
+    });
+    test('valid check in and out date but property already booked', async () => {
+      const payload = {
+        guest_id: 1,
+        check_in_date: '2025-12-10',
+        check_out_date: '2025-12-15',
+      };
+      const { body } = await request(app).post('/api/properties/2/booking').send(payload).expect(400);
+
+      expect(body.msg).toBe('Property already booked for this dates.');
     });
   });
 

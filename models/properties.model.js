@@ -1,3 +1,4 @@
+const { checkout } = require('../app');
 const db = require('../db/connection');
 
 const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order, amenity) => {
@@ -54,16 +55,19 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order, amenit
   }
 
   if (amenity) {
-    for (let i = 0; i < amenity.length; i++) {
-      if (!validAmenities.includes(amenity[i])) {
-        return Promise.reject({ status: 400, msg: 'Invalid amenity passed.' });
-      }
-    }
     if (Array.isArray(amenity)) {
+      for (let i = 0; i < amenity.length; i++) {
+        if (!validAmenities.includes(amenity[i])) {
+          return Promise.reject({ status: 400, msg: 'Invalid amenity passed.' });
+        }
+      }
       queryValues.push(...amenity);
 
       havingStr += ` HAVING COUNT(DISTINCT amenity_slug) = ${amenity.length}`;
     } else {
+      if (!validAmenities.includes(amenity)) {
+        return Promise.reject({ status: 400, msg: 'Invalid amenity passed.' });
+      }
       queryValues.push(amenity);
       havingStr += ` HAVING COUNT(DISTINCT amenity_slug) = 1`;
     }
@@ -259,6 +263,18 @@ const fetchPropertyBookings = async (id) => {
 
 const sendBooking = async (propertyId, guestId, checkInDate, checkOutDate) => {
   const queryValues = [propertyId, guestId, checkInDate, checkOutDate];
+
+  const { rows: propertyBooked } = await db.query(
+    `
+  SELECT * FROM bookings
+  WHERE property_id = $1 AND check_in_date >= $2  AND check_out_date <= $3;
+  `,
+    [propertyId, new Date(checkInDate), new Date(checkOutDate)]
+  );
+
+  if (propertyBooked.length > 0) {
+    return Promise.reject({ status: 400, msg: 'Property already booked for this dates.' });
+  }
 
   if (new Date(checkOutDate) < new Date(checkInDate)) {
     return Promise.reject({ status: 400, msg: 'Checkout date needs to be after checkin date.' });
