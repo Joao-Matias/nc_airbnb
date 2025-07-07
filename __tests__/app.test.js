@@ -239,7 +239,7 @@ describe('app', () => {
       expect(body.msg).toBe('Bad request.');
     });
     test('valid property ID and non-existent responds with 404 and msg', async () => {
-      const { body } = await request(app).get('/api/properties/999?user_id=1').expect(404);
+      const { body } = await request(app).get('/api/properties/999').expect(404);
 
       expect(body.msg).toBe('Property not found.');
     });
