@@ -143,7 +143,7 @@ const fetchPropertyById = async (propertyId, userId) => {
     FROM properties 
     JOIN users
     ON properties.host_id = users.user_id
-    JOIN favourites
+    LEFT JOIN favourites
     ON properties.property_id = favourites.property_id
     LEFT JOIN images
     ON properties.property_id = images.property_id
