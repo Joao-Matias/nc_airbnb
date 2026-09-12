@@ -1,0 +1,19 @@
+p {
+  margin: 0;
+}
+
+.propertyDetails {
+  margin: 2rem;
+  margin-bottom: 0;
+  display: grid;
+  grid-template-rows: 2fr 1fr 1fr 6fr;
+  gap: 1rem;
+  padding-bottom: 2rem;
+  border-bottom: 0.1rem solid rgba(81, 81, 81, 0.4);
+}
+
+.propertySubTitle {
+  color: rgb(19, 19, 19);
+  font-size: 1.7rem;
+  margin: 0;
+}

@@ -1,0 +1,11 @@
+* {
+  max-width: 193rem;
+  margin: 0 auto;
+  font-size: 62.5%;
+  box-sizing: border-box;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.loading {
+  font-size: 3rem;
+}

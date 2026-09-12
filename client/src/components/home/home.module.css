@@ -1,0 +1,79 @@
+.loading {
+  font-size: 3rem;
+}
+
+.homeContainer {
+  height: 100vh;
+  width: 100vw;
+  background-color: white;
+  display: grid;
+  grid-template-rows: 1fr 8fr 1fr;
+  overflow: hidden;
+}
+
+.homeNav {
+  width: 100%;
+}
+
+.navList {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  list-style: none;
+  height: 100%;
+}
+
+.individualIcons {
+  display: flex;
+  align-items: center;
+}
+
+.userIcon {
+  height: 5rem;
+  width: 5rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.navIcon {
+  font-size: 3rem;
+  color: black;
+  display: flex;
+  align-items: center;
+}
+
+.iconTitles {
+  font-size: 1rem;
+}
+
+.filterContainer {
+  display: flex;
+  width: 100vw;
+  align-items: center;
+}
+
+.filterButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  font-size: 1.2rem;
+  width: 10rem;
+  height: 3rem;
+  border-radius: 10rem;
+  color: black;
+  border: 0rem transparent transparent;
+  background-color: rgb(237, 237, 237);
+}
+
+.logo {
+  font-size: 3rem;
+  color: black;
+}
+
+.searchIcon {
+  font-size: 1.5rem;
+  color: black;
+  margin: 0;
+}

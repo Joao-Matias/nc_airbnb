@@ -1,0 +1,102 @@
+div {
+  margin: 0;
+}
+
+p {
+  margin: 0 2rem 0 2rem;
+}
+
+.propertyDetails {
+  margin: 2rem;
+  margin-bottom: 0;
+  display: grid;
+  grid-template-rows: 1fr 4fr;
+  gap: 1rem;
+  padding-bottom: 2rem;
+  border-bottom: 0.1rem solid rgba(81, 81, 81, 0.4);
+  overflow: scroll;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+}
+
+.reviewTitle {
+  display: flex;
+  margin: 0;
+  gap: 0.5rem;
+  width: 90%;
+}
+
+.propertySubTitle {
+  color: rgb(19, 19, 19);
+  font-size: 1.7rem;
+  margin: 0;
+}
+
+.reviewNumber {
+  margin: 0;
+}
+
+.ratingCont {
+  display: flex;
+  gap: 0.4rem;
+  color: rgba(0, 0, 0, 0.8);
+  margin: 0;
+  align-items: center;
+}
+
+.rating {
+  font-size: 1.5rem;
+  height: 100%;
+}
+
+.ratingStar {
+  font-size: 1rem;
+  height: 100%;
+}
+
+.individualReview {
+  display: flex;
+  padding: 0;
+  gap: 0.5rem;
+}
+
+.reviewContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 85vw;
+}
+
+.propertyDetails::-webkit-scrollbar {
+  display: none;
+}
+
+.reviewContainer {
+  scroll-snap-align: start;
+}
+
+.reviewHeader {
+  display: flex;
+  width: 50%;
+  align-items: center;
+  margin: 0;
+}
+
+.individualReviewRating {
+  color: black;
+  font-size: 0.9rem;
+}
+
+.reviewGuestContainer {
+  display: flex;
+
+  align-items: center;
+}
+
+.reviewGuestImg {
+  height: 4rem;
+  width: 4rem;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 2rem 0 2rem;
+}
