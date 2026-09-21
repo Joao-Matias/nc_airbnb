@@ -14,8 +14,11 @@
   justify-content: center;
 }
 
-.propertyCard {
+.propertyCardContainer {
   width: 100%;
+}
+
+.propertyCard {
   display: flex;
   flex-direction: column;
   padding: 1rem;
@@ -25,12 +28,15 @@
 .propertyImg {
   height: 10rem;
   border-radius: 2rem;
+  width: 100%;
 }
 
 .propertyTitle {
   color: black;
   display: flex;
   font-size: 2rem;
+  align-items: center;
+  justify-content: center;
 }
 
 p {
@@ -39,5 +45,8 @@ p {
 }
 
 .propertyCardDiv {
+  display: flex;
   width: 100%;
+  align-items: center;
+  justify-content: center;
 }

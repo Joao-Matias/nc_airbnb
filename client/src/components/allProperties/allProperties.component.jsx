@@ -20,7 +20,11 @@ const AllProperties = () => {
     <ul className={style.propertiesList}>
       {activeProperties.properties.map((property) => {
         return (
-          <Link key={property.property_id} to={`/properties/${property.property_id}`}>
+          <Link
+            className={style.propertyCardContainer}
+            key={property.property_id}
+            to={`/properties/${property.property_id}`}
+          >
             <li className={style.propertyCard}>
               <img className={style.propertyImg} src={property.image} />
               <h3 className={style.propertyTitle}>

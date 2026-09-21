@@ -7,22 +7,38 @@
   width: 100vw;
   background-color: white;
   display: grid;
-  grid-template-rows: 1fr 8fr 1fr;
+  grid-template-rows: 1fr 7fr 1fr;
   overflow: hidden;
 }
 
 .homeNav {
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(244, 244, 244);
 }
 
 .navList {
-  display: flex;
+  display: grid;
 
   align-items: center;
   justify-content: center;
   padding: 0;
   list-style: none;
   height: 100%;
+  grid-template-columns: 1fr 3fr;
+}
+
+.navListUser {
+  display: flex;
+}
+
+.navListIcons {
+  display: flex;
+
+  gap: 2rem;
 }
 
 .individualIcons {
@@ -31,21 +47,26 @@
 }
 
 .userIcon {
-  height: 5rem;
-  width: 5rem;
+  height: 4rem;
+  width: 4rem;
   border-radius: 50%;
   object-fit: cover;
+}
+
+.navIconContainer {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
 }
 
 .navIcon {
   font-size: 3rem;
   color: black;
-  display: flex;
-  align-items: center;
 }
 
 .iconTitles {
-  font-size: 1rem;
+  font-size: 1.5rem;
+  text-justify: center;
 }
 
 .filterContainer {
@@ -67,9 +88,14 @@
   background-color: rgb(237, 237, 237);
 }
 
+.logoContainer {
+  background-color: rgb(244, 244, 244);
+}
+
 .logo {
-  font-size: 3rem;
+  font-size: 4rem;
   color: black;
+  text-align: center;
 }
 
 .searchIcon {

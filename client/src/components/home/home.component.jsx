@@ -11,40 +11,11 @@ const Home = ({ activeUser }) => {
 
   return (
     <div className={style.homeContainer}>
-      <nav className={style.homeNav}>
-        <ul className={style.navList}>
-          <li>
-            <img className={style.userIcon} src={activeUser.user.avatar} />
-          </li>
-          <li>
-            <Link>
-              <CiSearch className={style.navIcon} />
-              <p className={style.iconTitles}>Search</p>
-            </Link>
-          </li>
-          <li>
-            <Link>
-              <CiRollingSuitcase className={style.navIcon} />
-              <p className={style.iconTitles}>Bookings</p>
-            </Link>
-          </li>
-          <li>
-            <Link>
-              <CiRoute className={style.navIcon} />
-              <p className={style.iconTitles}>Last Property</p>
-            </Link>
-          </li>
-          <li>
-            <Link>
-              <CiHome className={style.navIcon} />
-              <p className={style.iconTitles}>My Properties</p>
-            </Link>
-          </li>
-        </ul>
-      </nav>
+      <div className={style.logoContainer}>
+        <h1 className={style.logo}>Airbnb</h1>
+      </div>
       <AllProperties />
-      <section className={style.filterContainer}>
-        <h1 className={style.logo}>AirBnB</h1>
+      {/* <section className={style.filterContainer}>
         <button
           onClick={() => {
             setModalActive(true);
@@ -54,7 +25,36 @@ const Home = ({ activeUser }) => {
           <CiSearch className={style.searchIcon} />
           Search
         </button>
-      </section>
+      </section> */}
+      <nav className={style.homeNav}>
+        <ul className={style.navList}>
+          <li className={style.navListUser}>
+            <div>
+              <img className={style.userIcon} src={activeUser.user.avatar} />
+            </div>
+          </li>
+          <li className={style.navListIcons}>
+            <div>
+              <Link className={style.navIconContainer}>
+                <CiSearch className={style.navIcon} />
+                <p className={style.iconTitles}>Search</p>
+              </Link>
+            </div>
+            <div>
+              <Link className={style.navIconContainer}>
+                <CiRollingSuitcase className={style.navIcon} />
+                <p className={style.iconTitles}>Bookings</p>
+              </Link>
+            </div>
+            <div>
+              <Link className={style.navIconContainer}>
+                <CiHome className={style.navIcon} />
+                <p className={style.iconTitles}>My Properties</p>
+              </Link>
+            </div>
+          </li>
+        </ul>
+      </nav>
       {/* {modalActive && <FilterModal />} */}
     </div>
   );
