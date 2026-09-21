@@ -47,24 +47,25 @@ const Reviews = ({ id }) => {
           <h3 className={style.rating}>{reviewRating}</h3>
         </div>
       </div>
-
-      <ul className={style.individualReview}>
-        {reviews.map((review) => {
-          return (
-            <li className={style.reviewContainer} key={review.review_id}>
-              <div className={style.reviewHeader}>
-                <div>{getCorrectStars(review.rating)}</div>
-                <p>{getDate(review.created_at)}</p>
-              </div>
-              <p>{review.comment}</p>
-              <div className={style.reviewGuestContainer}>
-                <img className={style.reviewGuestImg} src={review.guest_avatar} />
-                <p>{review.guest}</p>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+      <div className={style.individualReviewContainer}>
+        <ul className={style.individualReview}>
+          {reviews.map((review) => {
+            return (
+              <li className={style.reviewContainer} key={review.review_id}>
+                <div className={style.reviewHeader}>
+                  <div>{getCorrectStars(review.rating)}</div>
+                  <p>{getDate(review.created_at)}</p>
+                </div>
+                <p>{review.comment}</p>
+                <div className={style.reviewGuestContainer}>
+                  <img className={style.reviewGuestImg} src={review.guest_avatar} />
+                  <p>{review.guest}</p>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </div>
   );
 };
