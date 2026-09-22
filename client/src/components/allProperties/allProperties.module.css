@@ -15,18 +15,18 @@
 }
 
 .propertyCardContainer {
-  width: 100%;
 }
 
 .propertyCard {
   display: flex;
   flex-direction: column;
+  width: 100%;
   padding: 1rem;
   gap: 0.7rem;
 }
 
 .propertyImg {
-  height: 10rem;
+  height: 15rem;
   border-radius: 2rem;
   width: 100%;
 }
@@ -40,7 +40,7 @@
 }
 
 p {
-  color: black;
+  color: rgb(95, 95, 95);
   font-size: 1.2rem;
 }
 
@@ -49,4 +49,5 @@ p {
   width: 100%;
   align-items: center;
   justify-content: center;
+  gap: 2rem;
 }

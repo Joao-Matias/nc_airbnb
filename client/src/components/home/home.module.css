@@ -17,7 +17,6 @@
   width: 100%;
   align-items: center;
   justify-content: center;
-  background-color: rgb(244, 244, 244);
 }
 
 .navList {
@@ -28,6 +27,7 @@
   padding: 0;
   list-style: none;
   height: 100%;
+  width: 90%;
   grid-template-columns: 1fr 3fr;
 }
 
@@ -37,8 +37,13 @@
 
 .navListIcons {
   display: flex;
-
+  width: 100%;
   gap: 2rem;
+  justify-content: center;
+}
+
+.navListIconsBox {
+  width: 20%;
 }
 
 .individualIcons {
@@ -60,12 +65,12 @@
 }
 
 .navIcon {
-  font-size: 3rem;
+  font-size: 2.5rem;
   color: black;
 }
 
 .iconTitles {
-  font-size: 1.5rem;
+  font-size: 1rem;
   text-justify: center;
 }
 
@@ -86,10 +91,6 @@
   color: black;
   border: 0rem transparent transparent;
   background-color: rgb(237, 237, 237);
-}
-
-.logoContainer {
-  background-color: rgb(244, 244, 244);
 }
 
 .logo {

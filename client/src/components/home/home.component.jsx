@@ -34,22 +34,22 @@ const Home = ({ activeUser }) => {
             </div>
           </li>
           <li className={style.navListIcons}>
-            <div>
+            <div className={style.navListIconsBox}>
               <Link className={style.navIconContainer}>
                 <CiSearch className={style.navIcon} />
                 <p className={style.iconTitles}>Search</p>
               </Link>
             </div>
-            <div>
+            <div className={style.navListIconsBox}>
               <Link className={style.navIconContainer}>
                 <CiRollingSuitcase className={style.navIcon} />
                 <p className={style.iconTitles}>Bookings</p>
               </Link>
             </div>
-            <div>
+            <div className={style.navListIconsBox}>
               <Link className={style.navIconContainer}>
                 <CiHome className={style.navIcon} />
-                <p className={style.iconTitles}>My Properties</p>
+                <p className={style.iconTitles}>Properties</p>
               </Link>
             </div>
           </li>

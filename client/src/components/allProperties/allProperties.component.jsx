@@ -32,7 +32,7 @@ const AllProperties = () => {
               </h3>
               <div className={style.propertyCardDiv}>
                 <p className={style.l}>{property.location}</p>
-                <p className={style.l}>£{property.price_per_night}</p>
+                <p className={style.l}>£{property.price_per_night} total</p>
               </div>
             </li>
           </Link>

@@ -21,6 +21,9 @@ const SingleProperty = ({ activeUser }) => {
         setSelectedProperty(data.property);
         setIsLoading(false);
       });
+    axios.get(`https://nc-airbnb-jm.onrender.com/api/properties/${id}/bookings`).then(({ data }) => {
+      console.log(data);
+    });
   }, [id, activeUser.user.user_id]);
 
   if (isLoading) return <h1 className={style.loading}>LOADING PROPERTY {id}...</h1>;

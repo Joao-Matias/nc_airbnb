@@ -1,4 +1,5 @@
 import style from './calendar.module.css';
+import CalendarApp from 'react-calendar';
 
 const Calendar = () => {
   return (
@@ -7,6 +8,7 @@ const Calendar = () => {
         <h2 className={style.propertySubTitle}>Choose dates</h2>
         <p>ckeckin/checkout</p>
       </div>
+      <CalendarApp className={style.calendar} />
       <div>
         <div>Chev left</div>
         <div>month</div>
