@@ -139,7 +139,7 @@ const fetchPropertyById = async (propertyId, userId) => {
     rows: [property],
   } = await db.query(
     `SELECT
-    properties.property_id,name AS property_name, location, price_per_night,description, CONCAT(first_name,' ',surname) AS host, avatar AS host_avatar,ARRAY_AGG(images.image_url) AS images, COUNT(favourites.property_id) AS favourite_count${favouritedStr}
+    properties.property_id,name AS property_name, location, price_per_night,description, CONCAT(first_name,' ',surname) AS host, properties.host_id, avatar AS host_avatar,ARRAY_AGG(images.image_url) AS images, COUNT(favourites.property_id) AS favourite_count${favouritedStr}
     FROM properties 
     JOIN users
     ON properties.host_id = users.user_id

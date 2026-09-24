@@ -216,6 +216,7 @@ describe('app', () => {
       expect(body.property.hasOwnProperty('description')).toBe(true);
       expect(body.property.hasOwnProperty('host')).toBe(true);
       expect(body.property.hasOwnProperty('host_avatar')).toBe(true);
+      expect(body.property.hasOwnProperty('host_id')).toBe(true);
       expect(body.property.hasOwnProperty('favourite_count')).toBe(true);
     });
 
