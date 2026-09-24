@@ -1,0 +1,43 @@
+p {
+  margin: 0;
+}
+
+.propertyDetails {
+  margin: 2rem;
+  margin-bottom: 0;
+  display: grid;
+  grid-template-rows: 1fr 2fr;
+  gap: 1rem;
+  padding-bottom: 2rem;
+  border-bottom: 0.1rem solid rgba(81, 81, 81, 0.4);
+}
+
+.propertySubTitle {
+  color: rgb(19, 19, 19);
+  font-size: 1.7rem;
+  margin: 0;
+}
+
+.hostContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 70%;
+
+  gap: 1rem;
+
+  border-radius: 3rem;
+
+  box-shadow: 1px 1px 30px hsla(0, 0%, 88%, 0.47);
+}
+
+.img {
+  margin-top: 2rem;
+  width: 70%;
+  max-width: 100%;
+  border-radius: 5rem;
+}
+
+.hostName {
+  font-size: 2rem;
+}

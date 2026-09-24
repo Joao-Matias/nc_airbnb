@@ -8,11 +8,14 @@ import { IoIosHeartEmpty, IoMdHeart } from 'react-icons/io';
 import Amenities from '../amenities';
 import Reviews from '../reviews';
 import Calendar from '../calendar';
+import Host from '../host';
 
 const SingleProperty = ({ activeUser }) => {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [selectedProperty, setSelectedProperty] = useState(null);
+
+  console.log(selectedProperty);
 
   useEffect(() => {
     axios
@@ -21,9 +24,9 @@ const SingleProperty = ({ activeUser }) => {
         setSelectedProperty(data.property);
         setIsLoading(false);
       });
-    axios.get(`https://nc-airbnb-jm.onrender.com/api/properties/${id}/bookings`).then(({ data }) => {
-      console.log(data);
-    });
+    // axios.get(`https://nc-airbnb-jm.onrender.com/api/properties/${id}/bookings`).then(({ data }) => {
+    //   console.log(data);
+    // });
   }, [id, activeUser.user.user_id]);
 
   if (isLoading) return <h1 className={style.loading}>LOADING PROPERTY {id}...</h1>;
@@ -63,7 +66,7 @@ const SingleProperty = ({ activeUser }) => {
           <Amenities id={id} />
           <Reviews id={id} />
           <Calendar />
-          <h1>Host</h1>
+          <Host selectedProperty={selectedProperty} />
           <h1>Other host properties</h1>
         </section>
       </div>
