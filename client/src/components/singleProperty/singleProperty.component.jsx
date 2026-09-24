@@ -14,16 +14,20 @@ const SingleProperty = ({ activeUser }) => {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [selectedProperty, setSelectedProperty] = useState(null);
-
-  console.log(selectedProperty);
+  const [host, setHost] = useState(null);
 
   useEffect(() => {
     axios
       .get(`https://nc-airbnb-jm.onrender.com/api/properties/${id}?user_id=${activeUser.user.user_id}`)
       .then(({ data }) => {
+        axios.get(`https://nc-airbnb-jm.onrender.com/api/users/${data.property.host_id}`).then(({ data }) => {
+          setHost(data);
+          setIsLoading(false);
+        });
+
         setSelectedProperty(data.property);
-        setIsLoading(false);
       });
+
     // axios.get(`https://nc-airbnb-jm.onrender.com/api/properties/${id}/bookings`).then(({ data }) => {
     //   console.log(data);
     // });
@@ -66,7 +70,7 @@ const SingleProperty = ({ activeUser }) => {
           <Amenities id={id} />
           <Reviews id={id} />
           <Calendar />
-          <Host selectedProperty={selectedProperty} />
+          <Host host={host} />
           <h1>Other host properties</h1>
         </section>
       </div>
