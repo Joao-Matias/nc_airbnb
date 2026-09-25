@@ -18,26 +18,49 @@ p {
   margin: 0;
 }
 
-.hostContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 70%;
-
+.hostDetails {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
-
+  padding: 3rem;
+  width: 80%;
   border-radius: 3rem;
 
   box-shadow: 1px 1px 30px hsla(0, 0%, 88%, 0.47);
 }
 
+.hostImgContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-right: 1rem;
+  border-right: 0.1rem solid rgba(81, 81, 81, 0.4);
+}
+
 .img {
-  margin-top: 2rem;
-  width: 70%;
+  width: 80%;
   max-width: 100%;
-  border-radius: 5rem;
+  clip-path: circle(50%);
+  aspect-ratio: 1/1;
+  object-fit: cover;
 }
 
 .hostName {
-  font-size: 2rem;
+  font-size: 2.5rem;
+  text-align: center;
+}
+
+.hostInfoContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.boldDetails {
+  font-size: 3rem;
+}
+
+.hostPText {
 }
