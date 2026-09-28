@@ -7,8 +7,6 @@ const Host = ({ host: { user } }) => {
   const msInYear = 1000 * 60 * 60 * 24 * 365.25;
   const yearsMember = Math.floor(difInMilSecs / msInYear);
 
-  console.log(user);
-
   return (
     <div className={style.propertyDetails}>
       <div>
@@ -22,7 +20,6 @@ const Host = ({ host: { user } }) => {
           <div className={style.hostInfoContainer}>
             <p className={style.boldDetails}>{yearsMember}</p>
             <p className={style.hostPText}>year{yearsMember > 1 ? 's' : ''} as a member</p>
-            <p></p>
           </div>
         </section>
       </div>

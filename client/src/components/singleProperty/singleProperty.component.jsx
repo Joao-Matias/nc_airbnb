@@ -24,6 +24,9 @@ const SingleProperty = ({ activeUser }) => {
           setHost(data);
           setIsLoading(false);
         });
+        axios.get(`https://nc-airbnb-jm.onrender.com/api/users/1/bookings`).then(({ data }) => {
+          console.log(data);
+        });
 
         setSelectedProperty(data.property);
       });
@@ -71,10 +74,8 @@ const SingleProperty = ({ activeUser }) => {
           <Reviews id={id} />
           <Calendar />
           <Host host={host} />
-          <h1>Other host properties</h1>
         </section>
       </div>
-      <footer className={style.footerContainer}>FOOTER</footer>
     </section>
   );
 };
