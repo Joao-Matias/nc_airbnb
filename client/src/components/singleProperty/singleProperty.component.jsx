@@ -16,6 +16,8 @@ const SingleProperty = ({ activeUser }) => {
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [host, setHost] = useState(null);
 
+  // console.log(selectedProperty);
+
   useEffect(() => {
     axios
       .get(`https://nc-airbnb-jm.onrender.com/api/properties/${id}?user_id=${activeUser.user.user_id}`)
@@ -24,9 +26,9 @@ const SingleProperty = ({ activeUser }) => {
           setHost(data);
           setIsLoading(false);
         });
-        axios.get(`https://nc-airbnb-jm.onrender.com/api/users/1/bookings`).then(({ data }) => {
-          console.log(data);
-        });
+        // axios.get(`https://nc-airbnb-jm.onrender.com/api/users/1/bookings`).then(({ data }) => {
+        //   console.log(data);
+        // });
 
         setSelectedProperty(data.property);
       });
@@ -38,6 +40,14 @@ const SingleProperty = ({ activeUser }) => {
 
   if (isLoading) return <h1 className={style.loading}>LOADING PROPERTY {id}...</h1>;
 
+  const favourProperty = async () => {
+    const data = await axios.post(`https://nc-airbnb-jm.onrender.com/api/properties/1/favourite`);
+
+    // setSelectedProperty((prevState) => {
+    //   return { ...prevState, favourited: !prevState.favourited };
+    // });
+  };
+
   return (
     <section className={style.container}>
       <nav className={style.nav}>
@@ -46,7 +56,7 @@ const SingleProperty = ({ activeUser }) => {
             <CiUndo className={style.icon} />
           </button>
         </Link>
-        <button className={style.iconButton}>
+        <button className={style.iconButton} onClick={favourProperty}>
           {selectedProperty.favourited ? (
             <IoMdHeart className={style.heartIconFilled} />
           ) : (
