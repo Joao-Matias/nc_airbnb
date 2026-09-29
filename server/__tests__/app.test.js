@@ -559,6 +559,7 @@ describe('app', () => {
   });
 
   describe('POST /api/properties/:id/favourite', () => {
+    1;
     test('responds with an object and a 201 code', async () => {
       const user = {
         guest_id: 2,

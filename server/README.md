@@ -18,7 +18,7 @@ Run the command 'npm run create-dbs'
 
 By creating a `.env.test` file and adding `PGDATABASE=airbnc_test` variable to it, you will be able to locally access the created database.
 
-## Seed you database
+## Seed your database
 
 ```
 npm run seed-dev

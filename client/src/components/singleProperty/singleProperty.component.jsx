@@ -16,7 +16,7 @@ const SingleProperty = ({ activeUser }) => {
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [host, setHost] = useState(null);
 
-  // console.log(selectedProperty);
+  console.log(selectedProperty.favourited);
 
   useEffect(() => {
     axios
@@ -26,26 +26,27 @@ const SingleProperty = ({ activeUser }) => {
           setHost(data);
           setIsLoading(false);
         });
-        // axios.get(`https://nc-airbnb-jm.onrender.com/api/users/1/bookings`).then(({ data }) => {
-        //   console.log(data);
-        // });
-
         setSelectedProperty(data.property);
       });
-
-    // axios.get(`https://nc-airbnb-jm.onrender.com/api/properties/${id}/bookings`).then(({ data }) => {
-    //   console.log(data);
-    // });
   }, [id, activeUser.user.user_id]);
 
   if (isLoading) return <h1 className={style.loading}>LOADING PROPERTY {id}...</h1>;
 
   const favourProperty = async () => {
-    const data = await axios.post(`https://nc-airbnb-jm.onrender.com/api/properties/1/favourite`);
+    if (selectedProperty.favourited === false || null) {
+      const data = await axios.post(
+        `https://nc-airbnb-jm.onrender.com/api/properties/${selectedProperty.property_id}/favourite`,
+        {
+          guest_id: activeUser.user.user_id,
+        }
+      );
 
-    // setSelectedProperty((prevState) => {
-    //   return { ...prevState, favourited: !prevState.favourited };
-    // });
+      setSelectedProperty((prevState) => {
+        return { ...prevState, favourited: !prevState.favourited };
+      });
+    } else {
+      console.log('test');
+    }
   };
 
   return (
