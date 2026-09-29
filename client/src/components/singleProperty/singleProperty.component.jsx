@@ -16,8 +16,7 @@ const SingleProperty = ({ activeUser }) => {
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [host, setHost] = useState(null);
 
-  console.log(selectedProperty.favourited);
-
+  console.log(selectedProperty);
   useEffect(() => {
     axios
       .get(`https://nc-airbnb-jm.onrender.com/api/properties/${id}?user_id=${activeUser.user.user_id}`)
@@ -33,7 +32,7 @@ const SingleProperty = ({ activeUser }) => {
   if (isLoading) return <h1 className={style.loading}>LOADING PROPERTY {id}...</h1>;
 
   const favourProperty = async () => {
-    if (selectedProperty.favourited === false || null) {
+    if (selectedProperty.favourited === false) {
       const data = await axios.post(
         `https://nc-airbnb-jm.onrender.com/api/properties/${selectedProperty.property_id}/favourite`,
         {
@@ -41,11 +40,18 @@ const SingleProperty = ({ activeUser }) => {
         }
       );
 
+      data.status === 201 &&
+        setSelectedProperty((prevState) => {
+          return { ...prevState, favourited: !prevState.favourited };
+        });
+    } else {
+      axios.delete(
+        `https://nc-airbnb-jm.onrender.com/api/properties/${selectedProperty.property_id}/users/${activeUser.user.user_id}/favourite`
+      );
+
       setSelectedProperty((prevState) => {
         return { ...prevState, favourited: !prevState.favourited };
       });
-    } else {
-      console.log('test');
     }
   };
 
