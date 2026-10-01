@@ -127,29 +127,66 @@ const fetchProperties = async (maxPrice, minPrice, sortBy, hostId, order, amenit
 };
 
 const fetchPropertyById = async (propertyId, userId) => {
-  const queryValues = [propertyId];
-  let favouritedStr = '';
+  // const queryValues = [propertyId];
+  // let favouritedStr = '';
 
-  if (userId !== undefined) {
-    queryValues.push(userId);
-    favouritedStr = `, favourites.guest_id = $${queryValues.length} AS favourited`;
+  // if (userId !== undefined) {
+  //   queryValues.push(userId);
+  //   favouritedStr = `, favourites.guest_id = $${queryValues.length} AS favourited`;
+  // }
+
+  // const {
+  //   rows: [property],
+  // } = await db.query(
+  //   `SELECT
+  //   properties.property_id,name AS property_name, location, price_per_night,description, CONCAT(first_name,' ',surname) AS host, properties.host_id, avatar AS host_avatar,ARRAY_AGG(images.image_url) AS images, COUNT(favourites.property_id) AS favourite_count${favouritedStr}
+  //   FROM properties
+  //   JOIN users
+  //   ON properties.host_id = users.user_id
+  //   LEFT JOIN favourites
+  //   ON properties.property_id = favourites.property_id
+  //   LEFT JOIN images
+  //   ON properties.property_id = images.property_id
+  //   WHERE properties.property_id = $1
+  //   GROUP BY properties.property_id, properties.location, properties.price_per_night, properties.description, users.first_name,users.surname, users.avatar,favourites.property_id,favourites.guest_id;
+  //   `,
+  //   queryValues
+  // );
+
+  const userUndifined = userId && userId !== 'undefined' && userId !== '';
+
+  const verifiedUserId = userUndifined ? userId : undefined;
+
+  const queryValues = [propertyId];
+  let favouritedStr = ', FALSE AS favourited'; // Default fallback
+
+  if (verifiedUserId !== undefined) {
+    queryValues.push(verifiedUserId);
+    // Uses the fixed BOOL_OR aggregation to stop rows from splitting up
+    favouritedStr = `, COALESCE(BOOL_OR(favourites.guest_id = $${queryValues.length}), FALSE) AS favourited`;
   }
 
   const {
     rows: [property],
   } = await db.query(
     `SELECT
-    properties.property_id,name AS property_name, location, price_per_night,description, CONCAT(first_name,' ',surname) AS host, properties.host_id, avatar AS host_avatar,ARRAY_AGG(images.image_url) AS images, COUNT(favourites.property_id) AS favourite_count${favouritedStr}
+      properties.property_id,
+      properties.name AS property_name, 
+      properties.location, 
+      properties.price_per_night,
+      properties.description, 
+      CONCAT(users.first_name, ' ', users.surname) AS host, 
+      properties.host_id, 
+      users.avatar AS host_avatar,
+      ARRAY_AGG(DISTINCT images.image_url) AS images, 
+      COUNT(DISTINCT favourites.favourite_id) AS favourite_count
+      ${favouritedStr}
     FROM properties 
-    JOIN users
-    ON properties.host_id = users.user_id
-    LEFT JOIN favourites
-    ON properties.property_id = favourites.property_id
-    LEFT JOIN images
-    ON properties.property_id = images.property_id
+    JOIN users ON properties.host_id = users.user_id
+    LEFT JOIN favourites ON properties.property_id = favourites.property_id
+    LEFT JOIN images ON properties.property_id = images.property_id
     WHERE properties.property_id = $1
-    GROUP BY properties.property_id, properties.location, properties.price_per_night, properties.description, users.first_name,users.surname, users.avatar,favourites.property_id,favourites.guest_id;
-    `,
+    GROUP BY properties.property_id, users.user_id;`,
     queryValues
   );
 
