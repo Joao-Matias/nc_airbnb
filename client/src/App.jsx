@@ -4,6 +4,7 @@ import Home from './components/home';
 import SingleProperty from './components/singleProperty';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import UserPage from './components/userPage';
 
 function App() {
   const [activeUser, setActiveUser] = useState(null);
@@ -21,6 +22,7 @@ function App() {
   return (
     <Routes>
       <Route path='/properties/:id' element={<SingleProperty activeUser={activeUser} />} />
+      <Route path='/user/:id' element={<UserPage />} />
       <Route path='/*' element={<Home activeUser={activeUser} />} />
     </Routes>
   );

@@ -1,0 +1,11 @@
+.loading,
+h1 {
+  font-size: 3rem;
+}
+
+.hostPage {
+  display: grid;
+  /* grid-template-rows: 1fr; */
+
+  /* width: 100%; */
+}

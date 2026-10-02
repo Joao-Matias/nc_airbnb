@@ -16,18 +16,22 @@ const SingleProperty = ({ activeUser }) => {
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [host, setHost] = useState(null);
 
-  console.log(selectedProperty);
   useEffect(() => {
     axios
       .get(`https://nc-airbnb-jm.onrender.com/api/properties/${id}?user_id=${activeUser.user.user_id}`)
       .then(({ data }) => {
         axios.get(`https://nc-airbnb-jm.onrender.com/api/users/${data.property.host_id}`).then(({ data }) => {
-          setHost(data);
+          console.log(data.user);
+          setHost(data.user);
           setIsLoading(false);
         });
         setSelectedProperty(data.property);
+      })
+      .catch((err) => {
+        console.error('Error fetching property data:', err);
+        setIsLoading(false);
       });
-  }, [id, activeUser.user.user_id]);
+  }, [id, activeUser]);
 
   if (isLoading) return <h1 className={style.loading}>LOADING PROPERTY {id}...</h1>;
 
@@ -36,7 +40,7 @@ const SingleProperty = ({ activeUser }) => {
       const data = await axios.post(
         `https://nc-airbnb-jm.onrender.com/api/properties/${selectedProperty.property_id}/favourite`,
         {
-          guest_id: activeUser.user.user_id,
+          guest_id: activeUser.user_id,
         }
       );
 
@@ -46,7 +50,7 @@ const SingleProperty = ({ activeUser }) => {
         });
     } else {
       axios.delete(
-        `https://nc-airbnb-jm.onrender.com/api/properties/${selectedProperty.property_id}/users/${activeUser.user.user_id}/favourite`
+        `https://nc-airbnb-jm.onrender.com/api/properties/${selectedProperty.property_id}/users/${activeUser.user_id}/favourite`
       );
 
       setSelectedProperty((prevState) => {
