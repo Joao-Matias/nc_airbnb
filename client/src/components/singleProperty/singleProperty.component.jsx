@@ -7,7 +7,7 @@ import { IoIosHeartEmpty, IoMdHeart } from 'react-icons/io';
 
 import Amenities from '../amenities';
 import Reviews from '../reviews';
-import Calendar from '../calendar';
+import CalendarPage from '../calendarPage';
 import Host from '../host';
 
 const SingleProperty = ({ activeUser }) => {
@@ -93,7 +93,7 @@ const SingleProperty = ({ activeUser }) => {
           </div>
           <Amenities id={id} />
           <Reviews id={id} />
-          <Calendar />
+          <CalendarPage />
           <Host host={host} />
         </section>
       </div>

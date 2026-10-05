@@ -1,11 +1,22 @@
-.loading,
-h1 {
-  font-size: 3rem;
+.userPage {
+  background-color: grey;
+  height: 100vh;
+  width: 100vw;
+
+  overflow: scroll;
 }
 
-.hostPage {
-  display: grid;
-  /* grid-template-rows: 1fr; */
+.userContainer {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  transform: translateY(3%);
+  border-radius: 4rem 4rem 0 0;
 
-  /* width: 100%; */
+  width: 100vw;
+  height: 100vh;
+}
+
+h1 {
+  font-size: 5rem;
 }

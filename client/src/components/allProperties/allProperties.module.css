@@ -14,9 +14,6 @@
   justify-content: center;
 }
 
-.propertyCardContainer {
-}
-
 .propertyCard {
   display: flex;
   flex-direction: column;

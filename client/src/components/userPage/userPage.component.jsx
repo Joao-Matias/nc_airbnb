@@ -27,8 +27,9 @@ const UserPage = () => {
   if (isLoading) return <h1 className={style.loading}>LOADING USER {userId}...</h1>;
 
   return (
-    <section className={style.hostPage}>
-      <h1>Being built!</h1>
+    <section className={style.userPage}>
+      <h1>User page</h1>
+      <div className={style.userContainer}></div>
     </section>
   );
 };
