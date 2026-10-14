@@ -17,7 +17,6 @@ const SingleProperty = ({ activeUser }) => {
   const [host, setHost] = useState(null);
   const [bookings, setBookings] = useState();
 
-  console.log(bookings);
   useEffect(() => {
     try {
       axios
@@ -33,7 +32,7 @@ const SingleProperty = ({ activeUser }) => {
       axios.get(`https://nc-airbnb-jm.onrender.com/api/properties/${id}/bookings`).then(({ data }) => {
         setBookings(data.bookings);
       });
-    } catch {
+    } catch (err) {
       console.error('Error fetching property data:', err);
       setIsLoading(false);
     }
@@ -99,7 +98,7 @@ const SingleProperty = ({ activeUser }) => {
           </div>
           <Amenities id={id} />
           <Reviews id={id} />
-          <CalendarPage />
+          <CalendarPage bookings={bookings} />
           <Host host={host} />
         </section>
       </div>

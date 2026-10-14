@@ -129,6 +129,7 @@
   text-align: center;
   font: inherit;
   font-size: 2rem;
+  color: black;
 }
 
 .react-calendar__tile:disabled {
