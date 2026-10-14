@@ -15,22 +15,28 @@ const SingleProperty = ({ activeUser }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [host, setHost] = useState(null);
+  const [bookings, setBookings] = useState();
 
+  console.log(bookings);
   useEffect(() => {
-    axios
-      .get(`https://nc-airbnb-jm.onrender.com/api/properties/${id}?user_id=${activeUser.user.user_id}`)
-      .then(({ data }) => {
-        axios.get(`https://nc-airbnb-jm.onrender.com/api/users/${data.property.host_id}`).then(({ data }) => {
-          console.log(data.user);
-          setHost(data.user);
-          setIsLoading(false);
+    try {
+      axios
+        .get(`https://nc-airbnb-jm.onrender.com/api/properties/${id}?user_id=${activeUser.user.user_id}`)
+        .then(({ data }) => {
+          axios.get(`https://nc-airbnb-jm.onrender.com/api/users/${data.property.host_id}`).then(({ data }) => {
+            setHost(data.user);
+            setIsLoading(false);
+          });
+          setSelectedProperty(data.property);
         });
-        setSelectedProperty(data.property);
-      })
-      .catch((err) => {
-        console.error('Error fetching property data:', err);
-        setIsLoading(false);
+
+      axios.get(`https://nc-airbnb-jm.onrender.com/api/properties/${id}/bookings`).then(({ data }) => {
+        setBookings(data.bookings);
       });
+    } catch {
+      console.error('Error fetching property data:', err);
+      setIsLoading(false);
+    }
   }, [id, activeUser]);
 
   if (isLoading) return <h1 className={style.loading}>LOADING PROPERTY {id}...</h1>;
