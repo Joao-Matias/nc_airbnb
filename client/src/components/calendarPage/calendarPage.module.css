@@ -10,6 +10,12 @@ p {
   border-bottom: 0.1rem solid rgba(81, 81, 81, 0.4);
 }
 
+.calendarGrid {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .propertySubTitle {
   color: rgb(19, 19, 19);
   font-size: 1.7rem;
@@ -17,6 +23,15 @@ p {
 }
 
 .calenderContainer {
+  margin: 2rem 0rem;
   display: flex;
   justify-content: center;
+}
+
+.clearButton {
+  font-size: 1.5rem;
+  background-color: transparent;
+  color: black;
+  padding: 0;
+  border: none;
 }
