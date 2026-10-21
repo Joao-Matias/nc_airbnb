@@ -4,19 +4,23 @@ import style from './calendarPage.module.css';
 import Calendar from 'react-calendar';
 
 const CalendarPage = ({ bookings }) => {
-  const [dates, setDates] = useState([]);
-  const [activeDates, setActiveDates] = useState(null);
   const today = new Date();
+  const [dates, setDates] = useState([]);
   const [maxDate, setMaxDate] = useState(new Date(today.getFullYear() + 1, today.getMonth(), today.getDate()));
 
-  console.log(maxDate);
+  const startDate =
+    dates.length === 0
+      ? []
+      : `${dates[0].getDate()} ${dates[0].toLocaleDateString('default', {
+          month: 'short',
+        })} ${dates[0].getFullYear()}`;
 
-  // const [startDate, endDate] = dates
-  //   ? [
-  //       `${dates[0].getDay()} ${dates[0].toLocaleDateString('default', { month: 'short' })} ${dates[0].getFullYear()}`,
-  //       `${dates[1].getDay()} ${dates[1].toLocaleDateString('default', { month: 'short' })} ${dates[1].getFullYear()}`,
-  //     ]
-  //   : [];
+  const endDate =
+    dates.length === 2
+      ? `${dates[1].getDate()} ${dates[1].toLocaleDateString('default', {
+          month: 'short',
+        })} ${dates[1].getFullYear()}`
+      : [];
 
   const handleTileDisabled = ({ date, view }) => {
     if (view !== 'month') return false;
@@ -37,25 +41,22 @@ const CalendarPage = ({ bookings }) => {
   };
 
   const handleDateSelection = (date) => {
-    if (dates[1]) {
-      setDates([date]);
-      return;
-    }
-    if (dates.length > 0 && date > dates[0]) {
-      // console.log('adding second');
+    if (dates.length > 0 && date > dates[0] && !dates[1]) {
       setDates((prevState) => {
         return [prevState[0], date];
       });
-      // console.log(dates);
+      setMaxDate(new Date(today.getFullYear() + 1, today.getMonth(), today.getDate()));
     } else {
-      console.log('adding first');
       setDates([date]);
       let closestDate = maxDate;
       for (let i = 0; i < bookings.length; i++) {
-        console.log(closestDate > new Date(bookings[0].check_in_date));
-        if (closestDate > new Date(bookings[0].check_in_date)) closestDate = bookings[0].check_in_date;
+        if (closestDate > new Date(bookings[0].check_in_date) && date < new Date(bookings[0].check_in_date)) {
+          closestDate = bookings[0].check_in_date;
+        } else {
+          closestDate = maxDate;
+        }
       }
-      console.log(closestDate);
+      closestDate = new Date(closestDate);
       setMaxDate(new Date(closestDate.getFullYear(), closestDate.getMonth(), closestDate.getDate()));
     }
   };
@@ -64,7 +65,7 @@ const CalendarPage = ({ bookings }) => {
     <div className={style.propertyDetails}>
       <div className={style.calendarGrid}>
         <h2 className={style.propertySubTitle}>Choose dates</h2>
-        {/* <p>{value ? `${startDate} - ${endDate}` : 'Select dates'}</p> */}
+        <p>{dates.length > 0 ? `${startDate} - ${endDate}` : 'Select dates'}</p>
         <div className={style.calenderContainer}>
           <Calendar
             onChange={handleDateSelection}
@@ -79,7 +80,7 @@ const CalendarPage = ({ bookings }) => {
         <button
           className={style.clearButton}
           onClick={() => {
-            setDates(null);
+            setDates([]);
           }}
         >
           <p>Clear dates</p>
